@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliações — FOS LATAM</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #009ee3 0%, #006fb4 100%);
+    min-height: 100vh;
+  }
+
+  .topo {
+    text-align: center; padding: 56px 20px 36px; color: #fff;
+  }
+  .topo .logo { font-size: 2.6rem; margin-bottom: 6px; }
+  .topo h1 { font-size: 1.7rem; margin-bottom: 6px; }
+  .topo p  { opacity: .88; font-size: .95rem; }
+
+  .container {
+    max-width: 920px; margin: 0 auto; padding: 0 20px 60px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: #fff; border-radius: 14px; padding: 26px 24px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+    text-decoration: none; color: inherit;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: transform .18s, box-shadow .18s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: ""; position: absolute; top:0; left:0; right:0; height: 4px;
+    background: #009ee3;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(0,0,0,.18);
+  }
+
+  .card .icone {
+    font-size: 1.8rem; width: 48px; height: 48px;
+    background: #eaf7ff; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card h3 { font-size: 1.05rem; color: #222; margin-top: 4px; }
+  .card p  { font-size: .85rem; color: #666; line-height: 1.4; }
+  .card .tag {
+    display: inline-block; margin-top: auto; font-size: .78rem;
+    font-weight: 700; color: #009ee3; letter-spacing: .03em;
+  }
+  .card .tag::after { content: " →"; }
+
+  .rodape {
+    text-align: center; color: rgba(255,255,255,.75);
+    font-size: .8rem; padding: 10px 20px 30px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <div class="logo">🏦</div>
+  <h1>Mercado Pago · FOS LATAM</h1>
+  <p>Selecciona la evaluación que deseas realizar</p>
+</div>
+
+<div class="container">
+  <div class="grid">
+
+    <a class="card" href="single-player.html">
+      <div class="icone">🎮</div>
+      <h3>Single Player HSP</h3>
+      <p>Evaluación sobre el flujo Single Player en HSP.</p>
+      <span class="tag">Comenzar</span>
+    </a>
+
+    <a class="card" href="intereses.html">
+      <div class="icone">💳</div>
+      <h3>Reembolso de Intereses — Tarjeta MP</h3>
+      <p>Evaluación sobre reembolsos de intereses de la Tarjeta Mercado Pago.</p>
+      <span class="tag">Comenzar</span>
+    </a>
+
+    <a class="card" href="pagos-off-hsp.html">
+      <div class="icone">💰</div>
+      <h3>Pagos OFF — HSP</h3>
+      <p>Evaluación sobre gestión de Pagos OFF, Cash In, PAF y conciliaciones.</p>
+      <span class="tag">Comenzar</span>
+    </a>
+
+    <a class="card" href="pagos-on-tc-td.html">
+      <div class="icone">🏧</div>
+      <h3>Pagos ON — TC/TD</h3>
+      <p>Evaluación sobre pagos online con Tarjeta de Crédito y Débito.</p>
+      <span class="tag">Comenzar</span>
+    </a>
+
+    <a class="card" href="banking-connections-money-in.html">
+      <div class="icone">🔗</div>
+      <h3>Banking Connections — Money In</h3>
+      <p>Evaluación sobre conexiones bancarias e ingresos de dinero (Money In).</p>
+      <span class="tag">Comenzar</span>
+    </a>
+
+  </div>
+</div>
+
+<div class="rodape">FOS · LATAM 2024 — Plataforma de Avaliações</div>
+
+</body>
+</html>
