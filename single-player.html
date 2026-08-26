@@ -41,6 +41,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
 .id-input.err-field{border-color:var(--err)}
 .id-err{color:var(--err);font-size:.78rem;font-weight:600;min-height:18px}
 .btn-start{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,var(--mp),var(--mp-dark));color:#fff;border:none;cursor:pointer;font-size:.95rem;font-weight:700;margin-top:6px;transition:opacity .18s,transform .12s;box-shadow:0 4px 14px rgba(0,158,227,.3)}
+.btn-home{display:inline-block;margin-top:22px;padding:12px 30px;border-radius:10px;border:2px solid var(--mp);color:var(--mp-dark);background:#fff;font-weight:700;font-size:.9rem;text-decoration:none;transition:background .18s}
+.btn-home:hover{background:var(--mp-light)}
 .btn-start:hover{opacity:.92;transform:translateY(-1px)}
 .id-note{font-size:.75rem;color:var(--muted);margin-top:12px;display:flex;align-items:center;justify-content:center;gap:5px}
 
@@ -292,6 +294,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
         <span>⚠️</span>
         <span id="error-msg">No se pudo enviar el resultado. Avisá a tu supervisor.</span>
       </div>
+
+      <a class="btn-home" href="index.html">🏠 Volver al inicio</a>
 
     </div>
   </div>
