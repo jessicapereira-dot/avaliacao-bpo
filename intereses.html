@@ -35,8 +35,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
 .id-input.err-field{border-color:var(--err)}
 .id-err{color:var(--err);font-size:.78rem;font-weight:600;min-height:18px}
 .btn-start{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,var(--mp),var(--mp-dark));color:#fff;border:none;cursor:pointer;font-size:.95rem;font-weight:700;margin-top:6px;transition:opacity .18s,transform .12s;box-shadow:0 4px 14px rgba(0,158,227,.3)}
-.btn-home{display:inline-block;margin-top:22px;padding:12px 30px;border-radius:10px;border:2px solid var(--mp);color:var(--mp-dark);background:#fff;font-weight:700;font-size:.9rem;text-decoration:none;transition:background .18s}
-.btn-home:hover{background:var(--mp-light)}
 .btn-start:hover{opacity:.92;transform:translateY(-1px)}
 .id-note{font-size:.75rem;color:var(--muted);margin-top:12px;display:flex;align-items:center;justify-content:center;gap:5px}
 .intro{background:var(--white);border-radius:var(--radius);padding:24px 28px;margin:20px 0 0;box-shadow:var(--shadow);border-left:5px solid var(--mp)}
@@ -230,9 +228,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
       <div class="sending-box" id="sending-box"><div class="spinner"></div><span>Enviando resultado a la planilla...</span></div>
       <div class="sent-box" id="sent-box"><span>✅</span><span>Resultado registrado con éxito en la planilla.</span></div>
       <div class="error-box" id="error-box"><span>⚠️</span><span id="error-msg">No se pudo enviar el resultado.</span></div>
-
-      <a class="btn-home" href="index.html">🏠 Volver al inicio</a>
-
+      <button class="retry-btn" onclick="retryEval()">🔄 Intentar nuevamente</button>
     </div>
   </div>
   <div style="text-align:center;margin-top:44px;font-size:.75rem;color:var(--muted)">Manual Reembolso/Bonificación de Intereses TC · FOS MLB 2024 · Mercado Pago</div>
@@ -242,25 +238,27 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
   <div class="modal">
     <div class="modal-hdr"><h2 id="modal-title">⚙️ Modo Editor</h2><button class="modal-close" onclick="closeEditor()">✕</button></div>
     <div class="modal-body" id="modal-body"></div>
+    <div id="bloco-codigo-gerado" style="display:none;padding:16px 24px;border-top:1.5px solid var(--border);">
+      <label style="font-size:.82rem;font-weight:600;color:#555;display:block;margin-bottom:4px;">
+        Código HTML completo (copia todo y reemplaza el archivo en GitHub)
+      </label>
+      <textarea id="ta-codigo-gerado"
+        style="width:100%;min-height:220px;font-family:monospace;font-size:.74rem;white-space:pre;padding:10px;border:1.5px solid #ddd;border-radius:8px;"
+        readonly onclick="this.select()"></textarea>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button class="btn-save" onclick="copiarCodigoGerado()">📋 Copiar todo el código</button>
+      </div>
+      <p style="font-size:.76rem;color:#777;margin-top:6px;">
+        1) Copia el código de arriba → 2) En GitHub, abre el archivo → 3) Reemplaza todo el contenido → 4) Commit.
+      </p>
+    </div>
     <div class="modal-footer" id="modal-footer"></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-const SHEETS_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfbvjEJ8GnFniMLSX7NQKQcX2mly06rtnC0xoZdBL0Pixt8Ng/formResponse";
-const FORM_ENTRY_IDS = {
-  dataHora:   "entry.2017782703",
-  avaliacao:  "entry.78177913",
-  nome:       "entry.1818530692",
-  email:      "entry.1056222960",
-  nota:       "entry.48293095",
-  resultado:  "entry.381965002",
-  corretas:   "entry.144582871",
-  incorretas: "entry.1335730000",
-  total:      "entry.891321817",
-  detalhes:   "entry.407031098"
-};
+const SHEETS_URL = "https://script.google.com/a/macros/mercadopago.com.br/s/AKfycbxKyw0BaamPDwwT6T-D4dy46ZyaqFCNc4s6No9wvbpXAaMEuv9HNBTsD5fX9VbOaFJuNg/exec";
 
 let CONFIG = {
   title: "Evaluación · Reembolso de Intereses TC",
@@ -513,7 +511,7 @@ function buildQuiz(){
       gq++;
       const card=document.createElement('div');card.className='qcard';card.id=`qcard-${gq}`;
       const optsHtml=qObj.opts.map((o,oi)=>`<label class="opt" data-q="${gq}" data-idx="${oi}" onclick="selectOpt(${gq},${oi})"><input type="radio" name="q${gq}" value="${oi}"><div class="oball" id="ball-${gq}-${oi}"></div><div class="otxt">${o}</div></label>`).join('');
-      card.innerHTML=`<div class="qnum">Pregunta ${gq}</div><div class="qtxt">${qObj.q}</div><div class="opts">${optsHtml}</div><button class="cbtn" id="btn-${gq}" onclick="confirmAnswer(${gq})">Siguiente →</button>`;
+      card.innerHTML=`<div class="qnum">Pregunta ${gq}</div><div class="qtxt">${qObj.q}</div><div class="opts">${optsHtml}</div><button class="cbtn" id="btn-${gq}" onclick="confirmAnswer(${gq})">Confirmar respuesta ✓</button><div class="fb" id="fb-${gq}"></div>`;
       div.appendChild(card);
     });
     area.appendChild(div);
@@ -533,11 +531,18 @@ function selectOpt(q,idx){
 
 function confirmAnswer(gq){
   if(answered[gq]!==undefined||selected[gq]===undefined)return;
-  let correctIdx=0,count=0;
-  outer:for(const sec of CONFIG.sections){for(const q of sec.questions){count++;if(count===gq){correctIdx=q.correct;break outer;}}}
+  let correctIdx=0,qObj=null,count=0;
+  outer:for(const sec of CONFIG.sections){for(const q of sec.questions){count++;if(count===gq){qObj=q;correctIdx=q.correct;break outer;}}}
   const isOk=selected[gq]===correctIdx;answered[gq]=isOk;
-  const btn=document.getElementById(`btn-${gq}`);btn.disabled=true;btn.textContent='✓ Respondida';
-  document.querySelectorAll(`.opt[data-q="${gq}"]`).forEach(o=>{o.classList.add('locked');});
+  const btn=document.getElementById(`btn-${gq}`);btn.disabled=true;btn.textContent=isOk?'✓ Correcto':'✗ Incorrecto';
+  document.querySelectorAll(`.opt[data-q="${gq}"]`).forEach(o=>{
+    const idx=parseInt(o.dataset.idx);o.classList.add('locked');o.classList.remove('sel');
+    if(idx===correctIdx){o.classList.add('r-ok');document.getElementById(`ball-${gq}-${idx}`).textContent='✓';}
+    else if(idx===selected[gq]&&!isOk){o.classList.add('r-err');document.getElementById(`ball-${gq}-${idx}`).textContent='✗';}
+  });
+  const fb=document.getElementById(`fb-${gq}`);fb.className=`fb show ${isOk?'ok':'err'}`;
+  fb.innerHTML=`<span class="fb-ico">${isOk?'✅':'❌'}</span><span>${isOk?qObj.fb_ok:qObj.fb_err}</span>`;
+  document.getElementById(`qcard-${gq}`).classList.add(isOk?'a-ok':'a-err');
   updateProgress();
   if(Object.keys(answered).length===totalQ())setTimeout(showResults,600);
 }
@@ -579,20 +584,10 @@ function showResults(){
 
 function sendToSheets(data){
   document.getElementById('sending-box').classList.add('show');
-  const dataHora = new Date().toLocaleString('pt-BR');
-  const formData = new FormData();
-  formData.append(FORM_ENTRY_IDS.dataHora, dataHora);
-  formData.append(FORM_ENTRY_IDS.avaliacao, data.avaliacao);
-  formData.append(FORM_ENTRY_IDS.nome, data.nome);
-  formData.append(FORM_ENTRY_IDS.email, data.email);
-  formData.append(FORM_ENTRY_IDS.nota, data.nota);
-  formData.append(FORM_ENTRY_IDS.resultado, data.resultado);
-  formData.append(FORM_ENTRY_IDS.corretas, data.corretas);
-  formData.append(FORM_ENTRY_IDS.incorretas, data.incorretas);
-  formData.append(FORM_ENTRY_IDS.total, data.total);
-  formData.append(FORM_ENTRY_IDS.detalhes, data.detalhes);
+  const params=new URLSearchParams({avaliacao:data.avaliacao,nome:data.nome,email:data.email,nota:data.nota,resultado:data.resultado,corretas:data.corretas,incorretas:data.incorretas,total:data.total,detalhes:data.detalhes});
+  const url=SHEETS_URL+'?'+params.toString();
   const timer=setTimeout(function(){document.getElementById('sending-box').classList.remove('show');document.getElementById('sent-box').classList.add('show');},10000);
-  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',body:formData})
+  fetch(url,{method:'GET',mode:'no-cors',credentials:'include',headers:{'Content-Type':'text/plain'}})
   .then(function(){clearTimeout(timer);document.getElementById('sending-box').classList.remove('show');document.getElementById('sent-box').classList.add('show');})
   .catch(function(){clearTimeout(timer);document.getElementById('sending-box').classList.remove('show');document.getElementById('sent-box').classList.add('show');});
 }
@@ -622,7 +617,7 @@ function renderEditorTabs(){
   const body=document.getElementById('modal-body'),footer=document.getElementById('modal-footer');
   const tabs=`<div class="ed-tabs"><button class="ed-tab ${editorTab===0?'active':''}" onclick="editorTab=0;renderEditorTabs()">📝 Preguntas</button><button class="ed-tab ${editorTab===1?'active':''}" onclick="editorTab=1;renderEditorTabs()">⚙️ Configuración</button></div>`;
   body.innerHTML=tabs+(editorTab===0?buildQuestionsEditor():buildSettingsEditor());
-  footer.innerHTML=`<button class="btn-cancel" onclick="closeEditor()">Cancelar</button><button class="btn-save" onclick="saveEditor()">💾 Guardar y aplicar</button>`;
+  footer.innerHTML=`<button class="btn-cancel" onclick="closeEditor()">Cancelar</button><button class="btn-save" onclick="saveEditor()">💾 Guardar y aplicar</button><button class="btn-save" style="background:#1bbb6e" onclick="gerarCodigoCompleto()">🧾 Generar código HTML</button>`;
 }
 
 function buildQuestionsEditor(){
@@ -665,6 +660,42 @@ function getGQ(si,qi){let n=0;for(let i=0;i<si;i++)n+=CONFIG.sections[i].questio
 function esc(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)closeEditor();});
+
+function gerarCodigoCompleto(){
+  if(editorTab===0){
+    CONFIG.sections.forEach((sec,si)=>{const t=document.getElementById(`sec-title-${si}`);if(t)sec.title=t.value;sec.questions.forEach((qObj,qi)=>{const qt=document.getElementById(`qtxt-${si}-${qi}`);if(qt)qObj.q=qt.value;qObj.opts.forEach((_,oi)=>{const ot=document.getElementById(`otext-${si}-${qi}-${oi}`);if(ot)qObj.opts[oi]=ot.value;});document.querySelectorAll(`input[name="correct-${si}-${qi}"]`).forEach(r=>{if(r.checked)qObj.correct=parseInt(r.value);});const fo=document.getElementById(`fbok-${si}-${qi}`),fe=document.getElementById(`fberr-${si}-${qi}`);if(fo)qObj.fb_ok=fo.value;if(fe)qObj.fb_err=fe.value;});});
+  }else{
+    const av=document.getElementById('cfg-avaliacao'),t=document.getElementById('cfg-title'),s=document.getElementById('cfg-sub'),lo=document.getElementById('cfg-low'),hi=document.getElementById('cfg-high'),pw=document.getElementById('cfg-pass');
+    if(av)CONFIG.avaliacaoNome=av.value;if(t)CONFIG.title=t.value;if(s)CONFIG.subtitle=s.value;if(lo)CONFIG.thresholdLow=parseFloat(lo.value);if(hi)CONFIG.thresholdHigh=parseFloat(hi.value);if(pw&&pw.value)CONFIG.password=pw.value;
+  }
+
+  let htmlAtual = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  const novoConfigTexto = "let CONFIG = " + JSON.stringify(CONFIG, null, 2) + ";";
+  const regexConfig = /let CONFIG = \{[\s\S]*?\n\};/;
+
+  if (regexConfig.test(htmlAtual)) {
+    htmlAtual = htmlAtual.replace(regexConfig, novoConfigTexto);
+  } else {
+    alert('⚠️ No se pudo localizar el CONFIG automáticamente.');
+    return;
+  }
+
+  htmlAtual = htmlAtual.replace('id="overlay" class="open"', 'id="overlay"');
+  htmlAtual = htmlAtual.replace(/<div id="bloco-codigo-gerado"[^>]*>/, '<div id="bloco-codigo-gerado" style="display:none;padding:16px 24px;border-top:1.5px solid var(--border);">');
+
+  document.getElementById('ta-codigo-gerado').value = htmlAtual;
+  document.getElementById('bloco-codigo-gerado').style.display = 'block';
+  showToast('✅ Código generado. Desplázate hacia abajo para copiarlo.');
+}
+
+function copiarCodigoGerado(){
+  const ta = document.getElementById('ta-codigo-gerado');
+  ta.select();
+  ta.setSelectionRange(0, 999999);
+  navigator.clipboard.writeText(ta.value)
+    .then(() => alert('✅ Código copiado. Ahora ve a GitHub, abre el archivo y reemplaza todo el contenido.'))
+    .catch(() => alert('No se pudo copiar automáticamente. Selecciona el texto manualmente (Ctrl+A, Ctrl+C).'));
+}
 </script>
 </body>
 </html>
