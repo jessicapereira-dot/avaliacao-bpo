@@ -295,7 +295,7 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "En el Admin de Banking Connections para MLM, ¿qué identificador se debe ingresar en 'Indicadores' al buscar por ID E2E?",
+    q: "Para hacer la busqueda de la transacción ¿qué identificador se debe ingresar al buscar por ID E2E?",
     correct: "La clave de rastreo del comprobante enviado por el cliente.",
     wrong: [
       "El número de caso asignado en CX One.",
@@ -304,7 +304,7 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "En el flujo de atención TERCEROS para Money In MLM, cuando el resultado de la query es 'Con Credito sin Debito', ¿qué se debe hacer?",
+    q: "En el flujo para Money In MLM, cuando tenemos cuando el pago como Not Found e resultado de la query es 'Con Credito sin Debito', ¿qué se debe hacer?",
     correct: "Enviamos a Laura por canal BCO.",
     wrong: [
       "El usuario debe contactarse con la entidad bancaria directamente.",
@@ -331,8 +331,8 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "¿Cómo se verifica en CX One el COELSA ID de una transacción MLA?",
-    correct: "En la pestaña Mercado Pago > Pagos > Operaciones Pendientes, ingresando el COELSA ID y expandiendo la pestaña COELSA.",
+    q: "¿Cómo se verifica en OneTool el COELSA ID de una transacción MLA?",
+    correct: "En OT > Por ID > Banking Connection Origin ID > ID > Site",
     wrong: [
       "En la pestaña Mercado Pago > Pagos > Operaciones con CLABE de rastreo, ingresando el COELSA ID.",
       "En el Admin de Banking Connections > Money IN > Por Site, filtrando por ID E2E.",
@@ -349,17 +349,17 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "En Simetrik para Money In (MLC), ¿qué fuente se selecciona en Gestión Transaccional?",
-    correct: "MLC - Liquidación.",
+    q: "Si tenemos una transaccion con status refunded, donde validamos su devolucion?",
+    correct: "En OT > Devoluciones > Estado",
     wrong: [
-      "MLA - Transferencias Bancarias.",
-      "MLM - CLABE STP.",
-      "MLC - Transferencias E2E."
+      "En Pagos OFF > CashIn > Pagos",
+      "Por el CX One > Pagamentos",
+      "Consultando por canal de slack con BCO."
     ]
   },
   {
-    q: "Para Money In en USD (dólares) MLA, si el estado de la transacción en Admin Onetool es 'Rechazada' y la fecha de rechazo es menor a 24 horas hábiles, ¿qué se hace?",
-    correct: "Devolver tarea.",
+    q: "Para Money In en USD (dólares) MLA, si el estado de la transacción en Admin Onetool es 'Rechazada' y la fecha de rechazo es mayor a 24 horas hábiles, ¿qué se hace?",
+    correct: "Validamos si hay diferencia de saldo por el archivo, si no hay vamos consultar por query, si hay consultamos el equipo de Dolar.",
     wrong: [
       "Derivar para Terceros para consultar BIND.",
       "Validar si hay diferencia de saldo en el archivo de conciliaciones.",
@@ -368,7 +368,7 @@ let QUESTIONS = [
   },
   {
     q: "En el flujo de USD (dólares) MLA, si la transacción es 'No acreditada / no localizada en MP' y las informaciones enviadas están correctas (Infos OK), ¿qué se hace?",
-    correct: "Derivar para Terceros (equipo debe consultar BIND).",
+    correct: "Derivar para Terceros, completamos la planilla (equipo debe consultar BIND).",
     wrong: [
       "Devolver tarea al agente Fintech.",
       "Aplicar Cashback por el monto en USD.",
@@ -376,7 +376,7 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "En el flujo TERCEROS de USD MLA, cuando el retorno de BIND indica 'Acreditado en BIND pero no se ve en MP', ¿qué se debe hacer?",
+    q: "Para MI Dolar, cuando el retorno de BIND indica 'Acreditado en BIND pero no se ve en MP', ¿qué se debe hacer?",
     correct: "Completar la planilla según las orientaciones (pestaña – Money IN) y PCNT hará la acción necesaria.",
     wrong: [
       "Derivar tarea para el equipo con script de cuenta origen.",
@@ -385,11 +385,11 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "En el e-mail de consulta a BIND para Money In en USD (estado rechazado no devuelto), ¿cuáles datos son obligatorios incluir?",
-    correct: "Comitente (User ID + nombre), CUIT/CUIL, CBU destino, Monto en USD, Fecha de ingreso, Banco Origen y Comprobante adjunto.",
+    q: "Cual documento es obligatorio para casos Money In Dolar?",
+    correct: "Comprobante con todos los datos visibles",
     wrong: [
       "Solo el número de caso CX, el Payment ID y el monto de la transferencia.",
-      "CUIT, CBU, Monto y nombre del representante que atendió el caso.",
+      "Nos es necesario un documento",
       "ID de transferencia, número de cuenta Mercado Pago y fecha de acreditación esperada."
     ]
   },
