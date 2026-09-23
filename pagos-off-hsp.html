@@ -5,34 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Avaliação — Pagos OFF HSP</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: #F0F9FF; min-height: 100vh; padding-bottom: 60px; }
-
-  /* ── CABEÇALHO FIXO ── */
-  .hdr { background: linear-gradient(135deg, #009ee3 0%, #003D5C 100%); padding: 28px 40px; display: flex; align-items: center; justify-content: space-between; gap: 16px; box-shadow: 0 4px 20px rgba(0,61,92,.25); }
-  .hdr-left { display: flex; align-items: center; gap: 18px; }
-  .hdr-logo { width: 52px; height: 52px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: 0 2px 12px rgba(0,0,0,.15); }
-  .hdr h1 { color: #fff; font-size: 1.4rem; font-weight: 800; letter-spacing: -.5px; }
-  .hdr p { color: rgba(255,255,255,.78); font-size: .83rem; margin-top: 3px; font-weight: 500; }
-  .btn-editor { background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.35); color: #fff; padding: 9px 18px; border-radius: 9px; cursor: pointer; font-size: .82rem; font-weight: 600; display: flex; align-items: center; gap: 7px; transition: background .18s; white-space: nowrap; flex-shrink: 0; }
-  .btn-editor:hover { background: rgba(255,255,255,.25); }
-
-  /* ── WRAP ── */
-  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
 
   /* ── TELA DE IDENTIFICAÇÃO ── */
-  #tela-id { padding-top: 8px; }
+  #tela-id {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; background: linear-gradient(135deg, #009ee3 0%, #006fb4 100%);
+  }
   .id-card {
-    background: #fff; border-radius: 14px; padding: 40px 36px;
-    max-width: 480px; margin: 36px auto 0; box-shadow: 0 4px 24px rgba(0,158,227,.10);
-    border: 1.5px solid #E0E7EF; text-align: center;
+    background: #fff; border-radius: 16px; padding: 40px 36px;
+    width: 100%; max-width: 420px; box-shadow: 0 8px 32px rgba(0,0,0,.18);
+    text-align: center;
   }
   .id-card .logo { font-size: 2.6rem; margin-bottom: 4px; }
   .id-card h2 { color: #009ee3; font-size: 1.25rem; margin-bottom: 6px; }
-  .id-card p  { color: #6B7280; font-size: .9rem; margin-bottom: 24px; }
+  .id-card p  { color: #666; font-size: .9rem; margin-bottom: 24px; }
   .id-card input {
-    width: 100%; padding: 12px 14px; border: 1.5px solid #E0E7EF;
+    width: 100%; padding: 12px 14px; border: 1.5px solid #ddd;
     border-radius: 8px; font-size: 1rem; margin-bottom: 14px;
     transition: border .2s;
   }
@@ -42,16 +32,26 @@
     border: none; border-radius: 8px; font-size: 1rem; font-weight: 600;
     cursor: pointer; transition: background .2s;
   }
-  .btn-primary:hover { background: #007BB5; }
-  .erro-id { color: #F23D4F; font-size: .85rem; margin-top: 6px; display: none; }
-  .btn-home { display: inline-block; margin-top: 22px; padding: 12px 30px; border-radius: 10px; border: 2px solid #009ee3; color: #007BB5; background: #fff; font-weight: 700; font-size: .9rem; text-decoration: none; transition: background .18s; }
-  .btn-home:hover { background: #E8F7FD; }
+  .btn-primary:hover { background: #007bbf; }
+  .erro-id { color: #e00; font-size: .85rem; margin-top: 6px; display: none; }
 
   /* ── QUIZ ── */
   #tela-quiz { display: none; max-width: 780px; margin: 0 auto; padding: 28px 16px 60px; }
+  .quiz-header {
+    background: linear-gradient(135deg, #009ee3, #006fb4);
+    border-radius: 14px; padding: 24px 28px; color: #fff;
+    margin-bottom: 28px; position: relative;
+  }
+  .quiz-header h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  .quiz-header p  { opacity: .85; font-size: .9rem; }
+  .badge-user {
+    position: absolute; top: 16px; right: 20px;
+    background: rgba(255,255,255,.2); border-radius: 20px;
+    padding: 4px 14px; font-size: .8rem;
+  }
   .progresso-wrap { margin: 0 0 24px; }
-  .progresso-label { display: flex; justify-content: space-between; font-size: .82rem; color: #6B7280; margin-bottom: 6px; }
-  .progresso-barra { background: #E0E7EF; border-radius: 99px; height: 8px; }
+  .progresso-label { display: flex; justify-content: space-between; font-size: .82rem; color: #555; margin-bottom: 6px; }
+  .progresso-barra { background: #dde3ea; border-radius: 99px; height: 8px; }
   .progresso-fill  { background: #009ee3; height: 8px; border-radius: 99px; transition: width .4s; }
 
   .card-pergunta {
@@ -59,40 +59,40 @@
     box-shadow: 0 2px 12px rgba(0,0,0,.08); margin-bottom: 20px;
   }
   .num-pergunta { font-size: .78rem; font-weight: 700; color: #009ee3; letter-spacing: .06em; margin-bottom: 10px; }
-  .texto-pergunta { font-size: 1.05rem; color: #1A1A2E; line-height: 1.55; margin-bottom: 22px; }
+  .texto-pergunta { font-size: 1.05rem; color: #222; line-height: 1.55; margin-bottom: 22px; }
   .opcoes { display: flex; flex-direction: column; gap: 10px; }
   .opcao {
     display: flex; align-items: flex-start; gap: 12px;
-    padding: 13px 16px; border: 1.8px solid #E0E7EF;
+    padding: 13px 16px; border: 1.8px solid #e0e6ef;
     border-radius: 10px; cursor: pointer; transition: all .18s;
-    font-size: .97rem; color: #1A1A2E;
+    font-size: .97rem; color: #333;
   }
-  .opcao:hover:not(.desabilitada) { border-color: #009ee3; background: #F0F9FF; }
-  .opcao.selecionada { border-color: #009ee3; background: #E8F7FD; }
-  .opcao.selecionada .letra-opcao { background: #009ee3; color: #fff; }
-  .opcao.desabilitada { pointer-events: none; opacity: .75; }
+  .opcao:hover { border-color: #009ee3; background: #f0f9ff; }
+  .opcao.correta  { border-color: #1bbb6e; background: #edfaf4; color: #0d7040; }
+  .opcao.incorreta{ border-color: #e84545; background: #fff0f0; color: #b02020; }
+  .opcao.desabilitada { pointer-events: none; opacity: .55; }
   .letra-opcao {
     min-width: 26px; height: 26px; border-radius: 50%;
-    background: #E0E7EF; display: flex; align-items: center;
-    justify-content: center; font-weight: 700; font-size: .8rem; color: #6B7280;
+    background: #e8edf3; display: flex; align-items: center;
+    justify-content: center; font-weight: 700; font-size: .8rem; color: #555;
     flex-shrink: 0;
   }
-  .opcao.correta   .letra-opcao { background: #00A650; color: #fff; }
-  .opcao.incorreta .letra-opcao { background: #F23D4F; color: #fff; }
+  .opcao.correta   .letra-opcao { background: #1bbb6e; color: #fff; }
+  .opcao.incorreta .letra-opcao { background: #e84545; color: #fff; }
 
   .feedback-box {
     margin-top: 16px; padding: 14px 16px; border-radius: 10px;
     font-size: .91rem; line-height: 1.5; display: none;
   }
-  .feedback-box.ok  { background: #E6F7EF; border-left: 4px solid #00A650; color: #065F46; }
-  .feedback-box.err { background: #FDEEF0; border-left: 4px solid #F23D4F; color: #9B1C1C; }
+  .feedback-box.ok  { background: #edfaf4; border-left: 4px solid #1bbb6e; color: #0d5c36; }
+  .feedback-box.err { background: #fff0f0; border-left: 4px solid #e84545; color: #8a1a1a; }
 
   .btn-nav {
     padding: 11px 28px; border: none; border-radius: 8px;
     font-size: .97rem; font-weight: 600; cursor: pointer; transition: background .2s;
   }
   .btn-nav.proximo { background: #009ee3; color: #fff; }
-  .btn-nav.proximo:hover { background: #007BB5; }
+  .btn-nav.proximo:hover { background: #007bbf; }
   .nav-row { display: flex; justify-content: flex-end; margin-top: 18px; }
 
   /* ── RESULTADO ── */
@@ -112,21 +112,27 @@
     display: inline-block; padding: 6px 20px; border-radius: 99px;
     font-size: .92rem; font-weight: 700; margin-bottom: 18px;
   }
-  .resultado-card h2 { font-size: 1.5rem; color: #1A1A2E; margin-bottom: 8px; }
-  .resultado-card p  { color: #6B7280; margin-bottom: 24px; }
+  .resultado-card h2 { font-size: 1.5rem; color: #222; margin-bottom: 8px; }
+  .resultado-card p  { color: #555; margin-bottom: 24px; }
   .stats-row { display: flex; justify-content: center; gap: 32px; margin: 20px 0 28px; }
   .stat { text-align: center; }
   .stat .num { font-size: 1.8rem; font-weight: 800; color: #009ee3; }
-  .stat .txt { font-size: .78rem; color: #6B7280; }
+  .stat .txt { font-size: .78rem; color: #777; }
   .btn-reiniciar {
     padding: 13px 36px; background: #009ee3; color: #fff;
     border: none; border-radius: 8px; font-size: 1rem;
     font-weight: 600; cursor: pointer;
   }
-  .btn-reiniciar:hover { background: #007BB5; }
+  .btn-reiniciar:hover { background: #007bbf; }
   .enviando { color: #009ee3; font-size: .85rem; margin-top: 12px; }
 
   /* ── EDITOR ── */
+  #btn-editor-toggle {
+    position: fixed; bottom: 20px; right: 20px; z-index: 999;
+    background: #444; color: #fff; border: none; border-radius: 50%;
+    width: 42px; height: 42px; font-size: 1.1rem; cursor: pointer; opacity: .55;
+  }
+  #btn-editor-toggle:hover { opacity: 1; }
   #modal-editor {
     display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55);
     z-index: 1000; align-items: center; justify-content: center;
@@ -137,9 +143,9 @@
     width: 100%; max-width: 560px; max-height: 88vh; overflow-y: auto;
   }
   .editor-box h3 { color: #009ee3; margin-bottom: 20px; }
-  .editor-box label { font-size: .82rem; font-weight: 600; color: #6B7280; display: block; margin-bottom: 4px; }
+  .editor-box label { font-size: .82rem; font-weight: 600; color: #555; display: block; margin-bottom: 4px; }
   .editor-box input, .editor-box textarea {
-    width: 100%; padding: 9px 12px; border: 1.5px solid #E0E7EF;
+    width: 100%; padding: 9px 12px; border: 1.5px solid #ddd;
     border-radius: 8px; font-size: .92rem; margin-bottom: 12px; font-family: inherit;
   }
   .editor-box textarea { min-height: 72px; resize: vertical; }
@@ -150,26 +156,12 @@
   }
   .btn-salvar   { background: #009ee3; color: #fff; }
   .btn-cancelar { background: #eee; color: #444; }
-  .btn-exportar { background: #00A650; color: #fff; }
+  .btn-exportar { background: #1bbb6e; color: #fff; }
   .pin-wrap { margin-bottom: 18px; }
   .pin-wrap input { max-width: 160px; }
 </style>
 </head>
 <body>
-
-<!-- ══════════ CABEÇALHO FIXO ══════════ -->
-<div class="hdr">
-  <div class="hdr-left">
-    <div class="hdr-logo">💰</div>
-    <div>
-      <h1>Pagos OFF — HSP</h1>
-      <p>Mercado Pago · FOS LATAM</p>
-    </div>
-  </div>
-  <button class="btn-editor" onclick="abrirPinModal()">⚙️ Modo Editor</button>
-</div>
-
-<div class="wrap">
 
 <!-- ══════════ TELA DE IDENTIFICAÇÃO ══════════ -->
 <div id="tela-id">
@@ -186,6 +178,12 @@
 
 <!-- ══════════ QUIZ ══════════ -->
 <div id="tela-quiz">
+  <div class="quiz-header">
+    <h1>Pagos OFF — HSP</h1>
+    <p>Responde con atención · 15 preguntas</p>
+    <span class="badge-user" id="badge-user"></span>
+  </div>
+
   <div class="progresso-wrap">
     <div class="progresso-label">
       <span id="prog-txt">Pregunta 1 de 15</span>
@@ -198,6 +196,7 @@
     <div class="num-pergunta" id="num-pergunta"></div>
     <div class="texto-pergunta" id="texto-pergunta"></div>
     <div class="opcoes" id="opcoes"></div>
+    <div class="feedback-box" id="feedback-box"></div>
     <div class="nav-row">
       <button class="btn-nav proximo" id="btn-proximo" onclick="proximaPergunta()" style="display:none">
         Siguiente →
@@ -221,12 +220,13 @@
       <div class="stat"><div class="num" id="stat-incorretas"></div><div class="txt">Incorrectas</div></div>
       <div class="stat"><div class="num" id="stat-total">15</div><div class="txt">Total</div></div>
     </div>
+    <button class="btn-reiniciar" onclick="reiniciar()">Reintentar</button>
     <p class="enviando" id="msg-enviando"></p>
-    <a class="btn-home" href="index.html">🏠 Volver al inicio</a>
   </div>
 </div>
 
-</div><!-- /.wrap -->
+<!-- Botón editor -->
+<button id="btn-editor-toggle" title="Editor" onclick="abrirPinModal()">⚙</button>
 
 <!-- Modal editor -->
 <div id="modal-editor">
@@ -244,11 +244,11 @@
     </div>
 
     <div id="editor-conteudo" style="display:none">
-      <p style="font-size:.82rem;color:#6B7280;margin-bottom:16px;">
+      <p style="font-size:.82rem;color:#777;margin-bottom:16px;">
         Selecciona una pregunta para editar:
       </p>
       <select id="sel-pergunta" onchange="carregarEdicao()"
-        style="width:100%;padding:9px;border:1.5px solid #E0E7EF;border-radius:8px;margin-bottom:16px;font-size:.92rem;">
+        style="width:100%;padding:9px;border:1.5px solid #ddd;border-radius:8px;margin-bottom:16px;font-size:.92rem;">
       </select>
 
       <label>Enunciado</label>
@@ -266,9 +266,22 @@
       <textarea id="ed-feedback"></textarea>
 
       <div class="editor-btns">
-        <button class="btn-salvar"   onclick="salvarEdicao()">💾 Guardar</button>
-        <button class="btn-exportar" onclick="exportarJSON()">📥 Exportar JSON</button>
+        <button class="btn-salvar"   onclick="salvarEdicao()">💾 Guardar edición</button>
+        <button class="btn-exportar" onclick="gerarCodigoCompleto()">🧾 Generar código HTML actualizado</button>
         <button class="btn-cancelar" onclick="fecharModal()">Cerrar</button>
+      </div>
+
+      <div id="bloco-codigo-gerado" style="display:none;margin-top:20px;">
+        <label>Código HTML completo (copia todo y reemplaza el archivo en GitHub)</label>
+        <textarea id="ta-codigo-gerado"
+          style="min-height:220px;font-family:monospace;font-size:.76rem;white-space:pre;"
+          readonly onclick="this.select()"></textarea>
+        <div class="editor-btns">
+          <button class="btn-salvar" onclick="copiarCodigoGerado()">📋 Copiar todo el código</button>
+        </div>
+        <p style="font-size:.78rem;color:#777;margin-top:6px;">
+          1) Copia el código de arriba → 2) En GitHub, abre el archivo → 3) Reemplaza todo el contenido → 4) Commit.
+        </p>
       </div>
     </div>
   </div>
@@ -278,7 +291,7 @@
 /* ══════════ CONFIG ══════════ */
 const CONFIG = {
   avaliacaoNome : "Pagos OFF HSP",
-  sheetsURL     : "https://docs.google.com/forms/d/e/1FAIpQLSfbvjEJ8GnFniMLSX7NQKQcX2mly06rtnC0xoZdBL0Pixt8Ng/formResponse",
+  sheetsURL     : "https://script.google.com/a/macros/mercadopago.com.br/s/AKfycbxKyw0BaamPDwwT6T-D4dy46ZyaqFCNc4s6No9wvbpXAaMEuv9HNBTsD5fX9VbOaFJuNg/exec",
   pinEditor     : "1234"
 };
 
@@ -454,7 +467,7 @@ let perguntas = [
 /* ══════════ ESTADO ══════════ */
 let indice       = 0;
 let corretas     = 0;
-let respostaSelecionada = null;
+let respostaDada = false;
 let respostasLog = [];
 let nomeUser     = "";
 let emailUser    = "";
@@ -469,6 +482,7 @@ function iniciarQuiz() {
   }
   document.getElementById("tela-id").style.display   = "none";
   document.getElementById("tela-quiz").style.display = "block";
+  document.getElementById("badge-user").textContent  = "👤 " + nomeUser;
   indice = 0; corretas = 0; respostasLog = [];
   renderPergunta();
 }
@@ -486,12 +500,13 @@ function renderPergunta() {
     div.className = "opcao";
     div.dataset.letra = op.letra;
     div.innerHTML = `<span class="letra-opcao">${op.letra.toUpperCase()}</span>${op.texto}`;
-    div.addEventListener("click", () => selecionarOpcao(op.letra, div));
+    div.addEventListener("click", () => responder(op.letra, div));
     oDiv.appendChild(div);
   });
 
+  document.getElementById("feedback-box").style.display = "none";
   document.getElementById("btn-proximo").style.display  = "none";
-  respostaSelecionada = null;
+  respostaDada = false;
 
   const pct = Math.round((indice / perguntas.length) * 100);
   document.getElementById("prog-txt").textContent  = `Pregunta ${indice+1} de ${perguntas.length}`;
@@ -499,29 +514,34 @@ function renderPergunta() {
   document.getElementById("prog-fill").style.width = pct + "%";
 }
 
-function selecionarOpcao(letra, elClicado) {
-  respostaSelecionada = letra;
-  document.querySelectorAll(".opcao").forEach(el => el.classList.remove("selecionada"));
-  elClicado.classList.add("selecionada");
-  document.getElementById("btn-proximo").style.display = "inline-flex";
-}
-
-function proximaPergunta() {
-  if (respostaSelecionada === null) return;
-
-  const p  = perguntas[indice];
-  const ok = respostaSelecionada === p.correta;
+function responder(letra, elClicado) {
+  if (respostaDada) return;
+  respostaDada = true;
+  const p   = perguntas[indice];
+  const ok  = letra === p.correta;
   if (ok) corretas++;
 
-  document.querySelectorAll(".opcao").forEach(el => el.classList.add("desabilitada"));
+  document.querySelectorAll(".opcao").forEach(el => {
+    el.classList.add("desabilitada");
+    if (el.dataset.letra === p.correta) el.classList.add("correta");
+    else if (el.dataset.letra === letra) el.classList.add("incorreta");
+  });
+
+  const fb = document.getElementById("feedback-box");
+  fb.className = "feedback-box " + (ok ? "ok" : "err");
+  fb.textContent = (ok ? "✅ ¡Correcto! " : "❌ Incorrecto. ") + p.feedback;
+  fb.style.display = "block";
+  document.getElementById("btn-proximo").style.display = "inline-flex";
 
   respostasLog.push({
     pergunta: p.enunciado,
-    escolha : respostaSelecionada,
+    escolha : letra,
     correta : p.correta,
     acerto  : ok
   });
+}
 
+function proximaPergunta() {
   indice++;
   if (indice < perguntas.length) {
     renderPergunta();
@@ -539,13 +559,13 @@ function mostrarResultado() {
 
   let nivel, corNivel, msg;
   if (nota < 7.0) {
-    nivel = "Nivelamiento"; corNivel = "#F23D4F";
+    nivel = "Nivelamiento"; corNivel = "#e84545";
     msg   = "Necesitas reforzar los contenidos. ¡Vuelve a estudiar el manual!";
   } else if (nota === 7.0) {
-    nivel = "En Aprendizaje"; corNivel = "#B45309";
+    nivel = "En Aprendizaje"; corNivel = "#f0a500";
     msg   = "¡Vas por buen camino! Sigue practicando para mejorar.";
   } else {
-    nivel = "Aprendizaje Superado"; corNivel = "#00A650";
+    nivel = "Aprendizaje Superado"; corNivel = "#1bbb6e";
     msg   = "¡Excelente desempeño! Dominas los conceptos de Pagos OFF HSP.";
   }
 
@@ -573,25 +593,26 @@ function enviarSheets(nota, nivel, corretas, incorretas) {
   const detalhes = respostasLog.map((r,i) =>
     `P${i+1}:${r.acerto?"✓":"✗"}(${r.escolha})`).join(" | ");
   const agora = new Date().toLocaleString("es-AR");
-  const formData = new FormData();
-  formData.append("entry.2017782703", agora);
-  formData.append("entry.78177913",   CONFIG.avaliacaoNome);
-  formData.append("entry.1818530692", nomeUser);
-  formData.append("entry.1056222960", emailUser);
-  formData.append("entry.48293095",   nota);
-  formData.append("entry.381965002",  nivel);
-  formData.append("entry.144582871",  corretas);
-  formData.append("entry.1335730000", incorretas);
-  formData.append("entry.891321817",  perguntas.length);
-  formData.append("entry.407031098",  detalhes);
-  fetch(CONFIG.sheetsURL, { method:"POST", mode:"no-cors", body: formData })
+  const params = new URLSearchParams({
+    dataHora   : agora,
+    avaliacao  : CONFIG.avaliacaoNome,
+    nome       : nomeUser,
+    email      : emailUser,
+    nota       : nota,
+    resultado  : nivel,
+    corretas   : corretas,
+    incorretas : incorretas,
+    total      : perguntas.length,
+    respostas  : detalhes
+  });
+  fetch(CONFIG.sheetsURL + "?" + params.toString(), { method:"GET", mode:"no-cors", credentials:"include" })
     .then(() => document.getElementById("msg-enviando").textContent = "✅ Resultado registrado correctamente.")
     .catch(() => document.getElementById("msg-enviando").textContent = "⚠️ No se pudo registrar el resultado.");
 }
 
 function reiniciar() {
   document.getElementById("tela-resultado").style.display = "none";
-  document.getElementById("tela-id").style.display        = "block";
+  document.getElementById("tela-id").style.display        = "flex";
   document.getElementById("inp-nome").value  = "";
   document.getElementById("inp-email").value = "";
 }
@@ -656,6 +677,40 @@ function exportarJSON() {
   a.href     = URL.createObjectURL(blob);
   a.download = "perguntas-pagos-off-hsp.json";
   a.click();
+}
+
+function gerarCodigoCompleto() {
+  // Pega o HTML completo da página atual, do jeito que está rodando agora
+  let htmlAtual = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+  // Monta o novo array de perguntas formatado, igual ao padrão do arquivo original
+  const novoArrayTexto = "let perguntas = " + JSON.stringify(perguntas, null, 2) + ";";
+
+  // Substitui o array antigo (entre "let perguntas = [" e o ";" que fecha) pelo novo
+  const regexArray = /let perguntas = \[[\s\S]*?\n\];/;
+
+  if (regexArray.test(htmlAtual)) {
+    htmlAtual = htmlAtual.replace(regexArray, novoArrayTexto);
+  } else {
+    alert("⚠️ No se pudo localizar el array de preguntas automáticamente. Contacta soporte.");
+    return;
+  }
+
+  // Limpia rastros del modal abierto (para no exportar el modal "aberto")
+  htmlAtual = htmlAtual.replace('id="modal-editor" class="aberto"', 'id="modal-editor"');
+  htmlAtual = htmlAtual.replace('<div id="modal-editor" class="aberto">', '<div id="modal-editor">');
+
+  document.getElementById("ta-codigo-gerado").value = htmlAtual;
+  document.getElementById("bloco-codigo-gerado").style.display = "block";
+}
+
+function copiarCodigoGerado() {
+  const ta = document.getElementById("ta-codigo-gerado");
+  ta.select();
+  ta.setSelectionRange(0, 999999);
+  navigator.clipboard.writeText(ta.value)
+    .then(() => alert("✅ Código copiado. Ahora ve a GitHub, abre el archivo y reemplaza todo el contenido."))
+    .catch(() => alert("No se pudo copiar automáticamente. Selecciona el texto manualmente (Ctrl+A, Ctrl+C)."));
 }
 </script>
 </body>
