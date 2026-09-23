@@ -301,12 +301,12 @@ let perguntas = [
     enunciado: "¿Qué acción se debe tomar cuando el cliente NO envía el comprobante de pago en casos de Pagos OFF fuera de plazo?",
     opcoes: [
       { letra:"a", texto:"Cerrar el caso automáticamente sin responder." },
-      { letra:"b", texto:'Responder con txtblaze "COMPHSP" indicando que nos adjunten el comprobante de pago.' },
+      { letra:"b", texto:'Rechazar y responder indicando que nos adjunten el comprobante de pago.' },
       { letra:"c", texto:"Derivar a terceros sin solicitar comprobante." },
       { letra:"d", texto:"Aplicar fondeo directamente sin comprobante." }
     ],
     correta: "b",
-    feedback: 'Cuando el cliente NO envía comprobante, se responde con txtblaze "COMPHSP" y se indica en el desplegable que nos adjunten el comprobante de pago.'
+    feedback: 'Cuando el cliente NO envía comprobante, puede si rechazar el caso y responder que nos adjunten el comprobante de pago.'
   },
   {
     enunciado: "¿Qué herramienta se debe usar para buscar la liquidación cuando el usuario que se contacta NO coincide con el del caso en Pagos OFF (MLA)?",
@@ -323,12 +323,12 @@ let perguntas = [
     enunciado: "En el Admin de Pagos OFF, si el pago aparece con estado 'APROBADO o PROCESADO', ¿cuál es la acción correcta?",
     opcoes: [
       { letra:"a", texto:'Fondear desde el botón del admin.' },
-      { letra:"b", texto:'Responder con txtblaze "PACRE" y derivar a la última cola.' },
+      { letra:"b", texto:'Responder que el pago si encuentra aprobado y indicarlos los datos que vemos.' },
       { letra:"c", texto:"Descartar el pago inmediatamente." },
       { letra:"d", texto:"Consultar a IT por Slack." }
     ],
     correta: "b",
-    feedback: 'Cuando el estado en el Admin es APROBADO o PROCESADO, respondemos con txtblaze "PACRE" y derivamos a la última cola.'
+    feedback: 'Cuando el estado en el Admin es APROBADO o PROCESADO, este pago fue hecho correctamente'
   },
   {
     enunciado: "¿En qué situación se puede fondear desde el botón de la captura en el Admin de OFF?",
@@ -353,37 +353,37 @@ let perguntas = [
     feedback: "Para MLC, si el pago tiene referencia en OS, se copia y se va al ADMIN OFF para verificarla."
   },
   {
-    enunciado: "¿Cuál es el txtblaze correcto para responder cuando el pago se encuentra EN PLAZO?",
+    enunciado: "¿En SemiOnline - MPE si el pago tiene status approved / cancelled y si encuentra en conciliacion, que hacemos?",
     opcoes: [
-      { letra:"a", texto:'"PACRE"' },
-      { letra:"b", texto:'"COMPHSP"' },
-      { letra:"c", texto:'"OFFPLAZO"' },
-      { letra:"d", texto:'"PMAN"' }
+      { letra:"a", texto:'"Aplicamos fondeo desde Admin Pagos OFF"' },
+      { letra:"b", texto:'"No gestionamos estes casos"' },
+      { letra:"c", texto:'"Aplicamos ACREDITAR desde Admin Pagos OFF"' },
+      { letra:"d", texto:'"Aplicamos una devolucion a este pago"' }
     ],
     correta: "c",
-    feedback: 'Cuando el payment se encuentra en plazo, se devuelve el caso respondiendo con txtblaze "OFFPLAZO".'
+    feedback: 'Cuando el pago tiene status approved / cancelled y si encuentra en conciliacion, acreditamos desde admin'
   },
   {
-    enunciado: "En SemiOnline MPE (Perú - PagoEfectivo), si encontramos el pago con status approved y payment_status cancelled, ¿qué se debe hacer?",
+    enunciado: "Pago en payer ANONYMOUS cual será la acción?",
     opcoes: [
       { letra:"a", texto:"Acreditar inmediatamente desde Admin Pagos OFF." },
-      { letra:"b", texto:"Consultar al equipo de TMO a través del canal de Slack #desvio-fos-tmo." },
-      { letra:"c", texto:'Responder con txtblaze "PACRE".' },
+      { letra:"b", texto:"Aplicamos cashback al usuario correcto" },
+      { letra:"c", texto:'Consultar al equipo de TMO a través del canal de Slack #desvio-fos-tmo.' },
       { letra:"d", texto:"Descartar el pago." }
     ],
     correta: "b",
-    feedback: "Para MPE, si el pago tiene status approved y payment_status cancelled, se consulta al equipo de TMO por el canal de Slack #desvio-fos-tmo."
+    feedback: "Cuando tenemos un pago con payer anonymous, y el monto fue aplicado a él, debemos hacer un cashback a la cuenta correcta de user."
   },
   {
-    enunciado: "¿Qué medio de pago utiliza Colombia (MCO) para Pagos OFF?",
+    enunciado: "¿Cuales son las entidades gestionadas por Colombia (MCO) para Pagos OFF?",
     opcoes: [
       { letra:"a", texto:"Abitab y Redpagos." },
       { letra:"b", texto:"Banesco y Mercantil." },
-      { letra:"c", texto:"Efecty." },
+      { letra:"c", texto:"Efecty y PSE." },
       { letra:"d", texto:"PayCash." }
     ],
     correta: "c",
-    feedback: "Colombia (MCO) utiliza Efecty como medio de pago OFF."
+    feedback: "Colombia (MCO) utiliza Efecty como pagos y PSE como semionline."
   },
   {
     enunciado: "¿Cuándo se debe descartar un pago en el Admin de OFF?",
@@ -401,7 +401,7 @@ let perguntas = [
     opcoes: [
       { letra:"a", texto:"Consultar a la entidad vía mail." },
       { letra:"b", texto:"Aplicar fondeo." },
-      { letra:"c", texto:'Responder con txtblaze "PACRE".' },
+      { letra:"c", texto:'Consultar a TMO' },
       { letra:"d", texto:"Derivar a terceros." }
     ],
     correta: "b",
@@ -423,7 +423,7 @@ let perguntas = [
     opcoes: [
       { letra:"a", texto:'Aplicar Pago Manual (PM) directamente.' },
       { letra:"b", texto:"Crear un ticket para OXXO y derivar a Terceros." },
-      { letra:"c", texto:'Responder con txtblaze "PACRE".' },
+      { letra:"c", texto:'Rechazar el pago".' },
       { letra:"d", texto:"Consultar a TMO por Slack." }
     ],
     correta: "b",
@@ -441,15 +441,15 @@ let perguntas = [
     feedback: "El archivo CSV default debe contener: Fecha de Pago, Referencia y Total Amount."
   },
   {
-    enunciado: "En Pagos Cruzados (MCO), si el payer y el collector NO coinciden, ¿cuál es la acción correcta?",
+    enunciado: "En Cash In - PayCash (MLM), solo gestionamos pago con status?",
     opcoes: [
-      { letra:"a", texto:"Aplicar retención al payer." },
-      { letra:"b", texto:'Devolver el caso con txtblaze "PCNOC".' },
-      { letra:"c", texto:"Fondear directamente al usuario correcto." },
-      { letra:"d", texto:"Consultar a IT." }
+      { letra:"a", texto:"Pending." },
+      { letra:"b", texto:'Cancelado' },
+      { letra:"c", texto:"Potencial Account" },
+      { letra:"d", texto:"Approved" }
     ],
     correta: "b",
-    feedback: 'En Pagos Cruzados: si el payer y el collector NO coinciden, se devuelve el caso con txtblaze "PCNOC".'
+    feedback: 'Para Paycash nuestra gestión será en pagos con status cancelados.'
   },
   {
     enunciado: "¿Cuál es el estado en Simetrik V2 (Big Query) que indica que se DEBE APLICAR fondeo en casos PAF?",
