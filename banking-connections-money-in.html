@@ -5,34 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Avaliação – Banking Connections: Money In</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: #F0F9FF; color: #1A1A2E; padding-bottom: 60px; }
-
-  /* ── CABEÇALHO FIXO ── */
-  .hdr { background: linear-gradient(135deg, #009ee3 0%, #003D5C 100%); padding: 28px 40px; display: flex; align-items: center; justify-content: space-between; gap: 16px; box-shadow: 0 4px 20px rgba(0,61,92,.25); }
-  .hdr-left { display: flex; align-items: center; gap: 18px; }
-  .hdr-logo { width: 52px; height: 52px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: 0 2px 12px rgba(0,0,0,.15); }
-  .hdr h1 { color: #fff; font-size: 1.4rem; font-weight: 800; letter-spacing: -.5px; }
-  .hdr p { color: rgba(255,255,255,.78); font-size: .83rem; margin-top: 3px; font-weight: 500; }
-  .btn-editor { background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.35); color: #fff; padding: 9px 18px; border-radius: 9px; cursor: pointer; font-size: .82rem; font-weight: 600; display: flex; align-items: center; gap: 7px; transition: background .18s; white-space: nowrap; flex-shrink: 0; }
-  .btn-editor:hover { background: rgba(255,255,255,.25); }
-
-  /* ── WRAP ── */
-  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #333; }
 
   /* TELA DE IDENTIFICAÇÃO */
-  #id-screen { padding-top: 8px; }
-  #id-screen .logo-area { display: none; }
+  #id-screen {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100vh; background: linear-gradient(135deg, #009ee3 0%, #006fb3 100%);
+    padding: 20px;
+  }
+  #id-screen .logo-area { text-align: center; margin-bottom: 32px; }
+  #id-screen .logo-area h1 { color: #fff; font-size: 2rem; font-weight: 700; }
+  #id-screen .logo-area p { color: rgba(255,255,255,0.85); font-size: 1rem; margin-top: 6px; }
   #id-card {
-    background: #fff; border-radius: 14px; padding: 40px 36px;
-    max-width: 480px; margin: 36px auto 0; box-shadow: 0 4px 24px rgba(0,158,227,.10);
-    border: 1.5px solid #E0E7EF;
+    background: #fff; border-radius: 16px; padding: 36px 40px;
+    width: 100%; max-width: 460px; box-shadow: 0 8px 32px rgba(0,0,0,0.18);
   }
   #id-card h2 { font-size: 1.3rem; color: #009ee3; margin-bottom: 24px; text-align: center; }
-  #id-card label { display: block; font-size: 0.85rem; font-weight: 600; color: #6B7280; margin-bottom: 6px; }
+  #id-card label { display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 6px; }
   #id-card input {
-    width: 100%; padding: 12px 14px; border: 2px solid #E0E7EF; border-radius: 8px;
+    width: 100%; padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 8px;
     font-size: 1rem; margin-bottom: 18px; transition: border-color .2s;
   }
   #id-card input:focus { outline: none; border-color: #009ee3; }
@@ -40,46 +32,48 @@
     width: 100%; padding: 14px; background: #009ee3; color: #fff; border: none;
     border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background .2s;
   }
-  #btn-start:hover { background: #007BB5; }
-  #id-error { color: #F23D4F; font-size: 0.85rem; margin-top: -10px; margin-bottom: 10px; display: none; }
-  .btn-home { display: inline-block; margin-top: 22px; padding: 12px 30px; border-radius: 10px; border: 2px solid #009ee3; color: #007BB5; background: #fff; font-weight: 700; font-size: .9rem; text-decoration: none; transition: background .18s; }
-  .btn-home:hover { background: #E8F7FD; }
+  #btn-start:hover { background: #0080c0; }
+  #id-error { color: #e53935; font-size: 0.85rem; margin-top: -10px; margin-bottom: 10px; display: none; }
 
   /* QUIZ */
   #quiz-screen { display: none; max-width: 780px; margin: 0 auto; padding: 30px 16px 60px; }
+  .quiz-header { text-align: center; margin-bottom: 28px; }
+  .quiz-header h2 { font-size: 1.5rem; color: #006fb3; font-weight: 700; }
+  .quiz-header p { color: #666; font-size: 0.9rem; margin-top: 4px; }
 
-  .progress-bar-wrap { background: #E0E7EF; border-radius: 99px; height: 10px; margin-bottom: 28px; }
+  .progress-bar-wrap { background: #dce8f5; border-radius: 99px; height: 10px; margin-bottom: 28px; }
   .progress-bar-fill { background: #009ee3; height: 10px; border-radius: 99px; transition: width .4s; }
 
   .question-card {
     background: #fff; border-radius: 14px; padding: 28px 30px;
-    box-shadow: 0 2px 14px rgba(0,158,227,0.10); margin-bottom: 24px;
+    box-shadow: 0 2px 14px rgba(0,110,179,0.10); margin-bottom: 24px;
   }
   .question-num { font-size: 0.78rem; font-weight: 700; color: #009ee3; text-transform: uppercase; margin-bottom: 10px; }
-  .question-text { font-size: 1.05rem; font-weight: 600; color: #1A1A2E; line-height: 1.55; margin-bottom: 20px; }
+  .question-text { font-size: 1.05rem; font-weight: 600; color: #222; line-height: 1.55; margin-bottom: 20px; }
 
   .option-btn {
     display: block; width: 100%; text-align: left; padding: 13px 16px; margin-bottom: 10px;
-    background: #F5F5F5; border: 2px solid #E0E7EF; border-radius: 9px;
-    font-size: 0.95rem; cursor: pointer; transition: all .18s; color: #1A1A2E;
+    background: #f5f9fd; border: 2px solid #d0e4f5; border-radius: 9px;
+    font-size: 0.95rem; cursor: pointer; transition: all .18s; color: #333;
   }
-  .option-btn:hover:not(:disabled) { background: #E8F7FD; border-color: #009ee3; }
-  .option-btn.selected { background: #E8F7FD; border-color: #009ee3; font-weight: 600; }
+  .option-btn:hover:not(:disabled) { background: #e0f0ff; border-color: #009ee3; }
+  .option-btn.correct { background: #e6f9ee; border-color: #2ecc71; color: #1a7a40; font-weight: 600; }
+  .option-btn.wrong { background: #fdecea; border-color: #e53935; color: #b71c1c; }
   .option-btn:disabled { cursor: default; }
 
   .feedback-msg {
     margin-top: 14px; padding: 12px 16px; border-radius: 8px;
     font-size: 0.9rem; font-weight: 600; display: none;
   }
-  .feedback-msg.correct { background: #E6F7EF; color: #065F46; border-left: 4px solid #00A650; }
-  .feedback-msg.wrong   { background: #FDEEF0; color: #9B1C1C; border-left: 4px solid #F23D4F; }
+  .feedback-msg.correct { background: #e6f9ee; color: #1a7a40; border-left: 4px solid #2ecc71; }
+  .feedback-msg.wrong   { background: #fdecea; color: #b71c1c; border-left: 4px solid #e53935; }
 
   #btn-next {
     display: none; margin: 20px auto 0; padding: 13px 36px;
     background: #009ee3; color: #fff; border: none; border-radius: 9px;
     font-size: 1rem; font-weight: 700; cursor: pointer; transition: background .2s;
   }
-  #btn-next:hover { background: #007BB5; }
+  #btn-next:hover { background: #0080c0; }
 
   /* RESULTADO */
   #result-screen {
@@ -88,37 +82,44 @@
   }
   .result-card {
     background: #fff; border-radius: 16px; padding: 40px 36px;
-    box-shadow: 0 4px 24px rgba(0,158,227,0.13);
+    box-shadow: 0 4px 24px rgba(0,110,179,0.13);
   }
-  .result-card h2 { font-size: 1.6rem; color: #003D5C; font-weight: 700; margin-bottom: 6px; }
-  .result-card .user-name { font-size: 1rem; color: #6B7280; margin-bottom: 24px; }
+  .result-card h2 { font-size: 1.6rem; color: #006fb3; font-weight: 700; margin-bottom: 6px; }
+  .result-card .user-name { font-size: 1rem; color: #666; margin-bottom: 24px; }
   .score-circle {
     width: 130px; height: 130px; border-radius: 50%; margin: 0 auto 24px;
     display: flex; align-items: center; justify-content: center;
     font-size: 2.4rem; font-weight: 800; color: #fff;
   }
-  .score-circle.green  { background: linear-gradient(135deg,#00A650,#067A3B); }
-  .score-circle.yellow { background: linear-gradient(135deg,#F59E0B,#B45309); }
-  .score-circle.red    { background: linear-gradient(135deg,#F23D4F,#9B1C1C); }
+  .score-circle.green  { background: linear-gradient(135deg,#2ecc71,#1aa357); }
+  .score-circle.yellow { background: linear-gradient(135deg,#f39c12,#d68910); }
+  .score-circle.red    { background: linear-gradient(135deg,#e53935,#b71c1c); }
   .result-label {
     font-size: 1.15rem; font-weight: 700; padding: 8px 20px; border-radius: 99px;
     display: inline-block; margin-bottom: 20px;
   }
-  .result-label.green  { background: #E6F7EF; color: #065F46; }
-  .result-label.yellow { background: #FFF8E1; color: #92400E; }
-  .result-label.red    { background: #FDEEF0; color: #9B1C1C; }
+  .result-label.green  { background: #e6f9ee; color: #1a7a40; }
+  .result-label.yellow { background: #fff8e1; color: #e65100; }
+  .result-label.red    { background: #fdecea; color: #b71c1c; }
   .stats-row { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
-  .stat-box { background: #E8F7FD; border-radius: 10px; padding: 14px 22px; min-width: 100px; }
+  .stat-box { background: #f0f7ff; border-radius: 10px; padding: 14px 22px; min-width: 100px; }
   .stat-box .stat-num { font-size: 1.6rem; font-weight: 800; color: #009ee3; }
-  .stat-box .stat-lbl { font-size: 0.75rem; color: #6B7280; margin-top: 2px; }
-  #result-msg { font-size: 0.9rem; color: #6B7280; margin-bottom: 24px; line-height: 1.5; }
+  .stat-box .stat-lbl { font-size: 0.75rem; color: #666; margin-top: 2px; }
+  #result-msg { font-size: 0.9rem; color: #555; margin-bottom: 24px; line-height: 1.5; }
   #btn-retry {
     padding: 13px 32px; background: #009ee3; color: #fff; border: none;
     border-radius: 9px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background .2s;
   }
-  #btn-retry:hover { background: #007BB5; }
+  #btn-retry:hover { background: #0080c0; }
 
   /* EDITOR */
+  #editor-btn {
+    position: fixed; bottom: 18px; right: 18px;
+    background: #006fb3; color: #fff; border: none; border-radius: 50%;
+    width: 46px; height: 46px; font-size: 1.3rem; cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.25); z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+  }
   #editor-modal {
     display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
     z-index: 1000; align-items: center; justify-content: center;
@@ -129,7 +130,7 @@
     width: 95%; max-width: 860px; max-height: 88vh; overflow-y: auto;
     box-shadow: 0 8px 32px rgba(0,0,0,0.22);
   }
-  .editor-box h3 { color: #003D5C; font-size: 1.2rem; margin-bottom: 20px; }
+  .editor-box h3 { color: #006fb3; font-size: 1.2rem; margin-bottom: 20px; }
   .editor-box textarea {
     width: 100%; height: 400px; font-family: monospace; font-size: 0.82rem;
     border: 1px solid #ccc; border-radius: 6px; padding: 10px; resize: vertical;
@@ -140,7 +141,7 @@
     font-weight: 700; cursor: pointer; font-size: 0.9rem;
   }
   .btn-save { background: #009ee3; color: #fff; }
-  .btn-close { background: #eee; color: #1A1A2E; }
+  .btn-close { background: #eee; color: #333; }
   #pin-overlay {
     display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55);
     z-index: 1100; align-items: center; justify-content: center;
@@ -150,36 +151,26 @@
     background: #fff; border-radius: 14px; padding: 32px 36px;
     width: 320px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.22);
   }
-  .pin-box h3 { color: #003D5C; margin-bottom: 16px; }
+  .pin-box h3 { color: #006fb3; margin-bottom: 16px; }
   .pin-box input {
-    width: 100%; padding: 11px; border: 2px solid #E0E7EF; border-radius: 8px;
+    width: 100%; padding: 11px; border: 2px solid #d0e4f5; border-radius: 8px;
     font-size: 1.1rem; text-align: center; letter-spacing: 6px; margin-bottom: 14px;
   }
   .pin-box button {
     width: 100%; padding: 12px; background: #009ee3; color: #fff;
     border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer;
   }
-  #pin-error { color: #F23D4F; font-size: 0.85rem; margin-bottom: 10px; display: none; }
+  #pin-error { color: #e53935; font-size: 0.85rem; margin-bottom: 10px; display: none; }
 </style>
 </head>
 <body>
 
-<!-- ══════════ CABEÇALHO FIXO ══════════ -->
-<div class="hdr">
-  <div class="hdr-left">
-    <div class="hdr-logo">🏦</div>
-    <div>
-      <h1>Banking Connections: Money In</h1>
-      <p>FOS LATAM · Mercado Pago</p>
-    </div>
-  </div>
-  <button id="editor-btn" class="btn-editor">⚙️ Modo Editor</button>
-</div>
-
-<div class="wrap">
-
 <!-- TELA DE IDENTIFICAÇÃO -->
 <div id="id-screen">
+  <div class="logo-area">
+    <h1>🏦 Banking Connections: Money In</h1>
+    <p>FOS LATAM · Mercado Pago</p>
+  </div>
   <div id="id-card">
     <h2>Identifícate para comenzar</h2>
     <label>Nombre completo</label>
@@ -193,6 +184,10 @@
 
 <!-- QUIZ -->
 <div id="quiz-screen">
+  <div class="quiz-header">
+    <h2>Banking Connections: Money In</h2>
+    <p id="quiz-subtitle">Pregunta <span id="q-num">1</span> de 15</p>
+  </div>
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
   </div>
@@ -200,6 +195,7 @@
     <div class="question-num" id="q-label">Pregunta 1</div>
     <div class="question-text" id="q-text"></div>
     <div id="options-container"></div>
+    <div class="feedback-msg" id="feedback-msg"></div>
   </div>
   <div style="text-align:center">
     <button id="btn-next">Siguiente →</button>
@@ -219,11 +215,12 @@
       <div class="stat-box"><div class="stat-num">15</div><div class="stat-lbl">Total</div></div>
     </div>
     <p id="result-msg"></p>
-    <a class="btn-home" href="index.html">🏠 Volver al inicio</a>
+    <button id="btn-retry">Reintentar</button>
   </div>
 </div>
 
-</div><!-- /.wrap -->
+<!-- BOTÓN EDITOR -->
+<button id="editor-btn" title="Editor">✏️</button>
 
 <!-- PIN OVERLAY -->
 <div id="pin-overlay">
@@ -242,14 +239,29 @@
     <textarea id="editor-textarea"></textarea>
     <div class="editor-actions">
       <button class="btn-save" id="btn-save-editor">Guardar cambios</button>
+      <button class="btn-save" id="btn-gerar-codigo" style="background:#1bbb6e;">🧾 Generar código HTML</button>
       <button class="btn-close" id="btn-close-editor">Cerrar</button>
+    </div>
+    <div id="bloco-codigo-gerado" style="display:none;margin-top:14px;">
+      <label style="font-size:.82rem;font-weight:600;color:#555;display:block;margin-bottom:4px;">
+        Código HTML completo (copia todo y reemplaza el archivo en GitHub)
+      </label>
+      <textarea id="ta-codigo-gerado"
+        style="width:100%;min-height:220px;font-family:monospace;font-size:.74rem;white-space:pre;padding:10px;border:1.5px solid #ddd;border-radius:8px;"
+        readonly onclick="this.select()"></textarea>
+      <div class="editor-actions">
+        <button class="btn-save" id="btn-copiar-codigo">📋 Copiar todo el código</button>
+      </div>
+      <p style="font-size:.76rem;color:#777;margin-top:6px;">
+        1) Copia el código de arriba → 2) En GitHub, abre el archivo → 3) Reemplaza todo el contenido → 4) Commit.
+      </p>
     </div>
   </div>
 </div>
 
 <script>
 const CONFIG = {
-  sheetsURL: 'https://docs.google.com/forms/d/e/1FAIpQLSfbvjEJ8GnFniMLSX7NQKQcX2mly06rtnC0xoZdBL0Pixt8Ng/formResponse',
+  sheetsURL: 'https://script.google.com/a/macros/mercadopago.com.br/s/AKfycbxKyw0BaamPDwwT6T-D4dy46ZyaqFCNc4s6No9wvbpXAaMEuv9HNBTsD5fX9VbOaFJuNg/exec',
   editorPin: '1234',
   avaliacaoNome: 'Banking Connections - Money In'
 };
@@ -392,7 +404,7 @@ let QUESTIONS = [
   }
 ];
 
-let currentQ = 0, score = 0, correct = 0, wrong = 0, answers = [], selectedAnswer = null;
+let currentQ = 0, score = 0, correct = 0, wrong = 0, answers = [];
 let userName = '', userEmail = '';
 
 // IDENTIFICAÇÃO
@@ -419,11 +431,12 @@ function shuffleQuestions() {
 
 function renderQuestion() {
   const q = QUESTIONS[currentQ];
+  document.getElementById('q-num').textContent = currentQ + 1;
   document.getElementById('q-label').textContent = `Pregunta ${currentQ + 1} de 15`;
   document.getElementById('q-text').textContent = q.q;
   document.getElementById('progress-fill').style.width = `${(currentQ / 15) * 100}%`;
+  document.getElementById('feedback-msg').style.display = 'none';
   document.getElementById('btn-next').style.display = 'none';
-  selectedAnswer = null;
 
   const opts = [q.correct, ...q.wrong].sort(() => Math.random() - 0.5);
   const container = document.getElementById('options-container');
@@ -432,26 +445,36 @@ function renderQuestion() {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
     btn.textContent = opt;
-    btn.addEventListener('click', () => selectOption(btn, opt));
+    btn.addEventListener('click', () => selectOption(btn, opt, q.correct));
     container.appendChild(btn);
   });
 }
 
-function selectOption(btn, selected) {
-  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedAnswer = selected;
+function selectOption(btn, selected, correctAnswer) {
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  const isCorrect = selected === correctAnswer;
+  const fb = document.getElementById('feedback-msg');
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.className = 'feedback-msg correct';
+    fb.textContent = '✅ ¡Correcto!';
+    correct++;
+  } else {
+    btn.classList.add('wrong');
+    fb.className = 'feedback-msg wrong';
+    fb.textContent = `❌ Incorrecto. La respuesta correcta es: "${correctAnswer}"`;
+    document.querySelectorAll('.option-btn').forEach(b => {
+      if (b.textContent === correctAnswer) b.classList.add('correct');
+    });
+    wrong++;
+  }
+  answers.push({ q: QUESTIONS[currentQ].q, selected, correct: correctAnswer, ok: isCorrect });
+  fb.style.display = 'block';
   document.getElementById('btn-next').style.display = 'block';
 }
 
 document.getElementById('btn-next').addEventListener('click', () => {
-  if (selectedAnswer === null) return;
-  const q = QUESTIONS[currentQ];
-  const isCorrect = selectedAnswer === q.correct;
-  if (isCorrect) correct++; else wrong++;
-  answers.push({ q: q.q, selected: selectedAnswer, correct: q.correct, ok: isCorrect });
-  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
-
   currentQ++;
   if (currentQ < 15) {
     renderQuestion();
@@ -499,21 +522,30 @@ function sendToSheets(score, label) {
     `P${i + 1}: ${a.ok ? '✓' : '✗'} | ${a.q} | Resp: ${a.selected}`
   ).join(' || ');
 
-  const formData = new FormData();
-  formData.append('entry.2017782703', now);
-  formData.append('entry.78177913',   CONFIG.avaliacaoNome);
-  formData.append('entry.1818530692', userName);
-  formData.append('entry.1056222960', userEmail);
-  formData.append('entry.48293095',   score);
-  formData.append('entry.381965002',  label);
-  formData.append('entry.144582871',  correct);
-  formData.append('entry.1335730000', wrong);
-  formData.append('entry.891321817',  15);
-  formData.append('entry.407031098',  det);
+  const params = new URLSearchParams({
+    dataHora: now,
+    avaliacao: CONFIG.avaliacaoNome,
+    nome: userName,
+    email: userEmail,
+    nota: score,
+    resultado: label,
+    corretas: correct,
+    incorretas: wrong,
+    total: 15,
+    detalhes: det
+  });
 
-  fetch(CONFIG.sheetsURL, { method: 'POST', mode: 'no-cors', body: formData })
+  fetch(`${CONFIG.sheetsURL}?${params.toString()}`, { method: 'GET', mode: 'no-cors', credentials: 'include' })
     .catch(() => {});
 }
+
+document.getElementById('btn-retry').addEventListener('click', () => {
+  currentQ = 0; score = 0; correct = 0; wrong = 0; answers = [];
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  shuffleQuestions();
+  renderQuestion();
+});
 
 // EDITOR
 document.getElementById('editor-btn').addEventListener('click', () => {
@@ -544,6 +576,44 @@ document.getElementById('btn-save-editor').addEventListener('click', () => {
 
 document.getElementById('btn-close-editor').addEventListener('click', () => {
   document.getElementById('editor-modal').classList.remove('open');
+  document.getElementById('bloco-codigo-gerado').style.display = 'none';
+});
+
+document.getElementById('btn-gerar-codigo').addEventListener('click', () => {
+  try {
+    QUESTIONS = JSON.parse(document.getElementById('editor-textarea').value);
+  } catch {
+    alert('❌ JSON inválido. Verifica la sintaxis antes de generar el código.');
+    return;
+  }
+
+  let htmlAtual = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+  const novoArrayTexto = "let QUESTIONS = " + JSON.stringify(QUESTIONS, null, 2) + ";";
+  const regexArray = /let QUESTIONS = \[[\s\S]*?\n\];/;
+
+  if (regexArray.test(htmlAtual)) {
+    htmlAtual = htmlAtual.replace(regexArray, novoArrayTexto);
+  } else {
+    alert('⚠️ No se pudo localizar el array de preguntas automáticamente.');
+    return;
+  }
+
+  htmlAtual = htmlAtual.replace('id="editor-modal" class="open"', 'id="editor-modal"');
+  htmlAtual = htmlAtual.replace('id="pin-overlay" class="open"', 'id="pin-overlay"');
+  htmlAtual = htmlAtual.replace(/<div id="bloco-codigo-gerado"[^>]*>/, '<div id="bloco-codigo-gerado" style="display:none;margin-top:14px;">');
+
+  document.getElementById('ta-codigo-gerado').value = htmlAtual;
+  document.getElementById('bloco-codigo-gerado').style.display = 'block';
+});
+
+document.getElementById('btn-copiar-codigo').addEventListener('click', () => {
+  const ta = document.getElementById('ta-codigo-gerado');
+  ta.select();
+  ta.setSelectionRange(0, 999999);
+  navigator.clipboard.writeText(ta.value)
+    .then(() => alert('✅ Código copiado. Ahora ve a GitHub, abre el archivo y reemplaza todo el contenido.'))
+    .catch(() => alert('No se pudo copiar automáticamente. Selecciona el texto manualmente (Ctrl+A, Ctrl+C).'));
 });
 </script>
 </body>
