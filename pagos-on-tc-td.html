@@ -286,17 +286,17 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "Para buscar un pago en Simetrik en el contexto de Pago Duplicado TC/TD, ¿qué filtro se utiliza en la pestaña 'LIQ MEDIOS ON'?",
-    correct: "LIQ_NRO_TARJETA con primeros 6 y últimos 4 números de la tarjeta (reemplazando asteriscos por X), o LIQ_TRANSACTION_ID con los primeros 11 números.",
+    q: "Si tenemos un pago con status refund not reconciled/pending con +30 días, como podemos avanzar?",
+    correct: "Es un pago pasible de aplicar cashback",
     wrong: [
-      "PAY_PAYMENT_ID con el número de payment del caso.",
-      "GTWR_REFUND_ID con el ID de refund generado en OneTool.",
-      "LIQ_FECHA_LIQUIDACION con la fecha de creación del pago."
+      "Debemos esperar +30 días habíles.",
+      "Rechazamos este pago",
+      "Contactamos al equipo de TMO para verificar la conciliación"
     ]
   },
   {
     q: "En MLC (Chile), para la búsqueda en el portal de Transbank, ¿qué dato se utiliza en el campo 'Local'?",
-    correct: "Los últimos 8 números del Merchant copiado de ONE SOURCE.",
+    correct: "Los últimos 8 números del Merchant copiado de OneTool.",
     wrong: [
       "El número de Payment ID completo tal como aparece en OneTool.",
       "El código de autorización del pago localizado en la sección Detalles.",
@@ -313,12 +313,12 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "Para anular por portal en MCO - Credibanco, ¿cuándo corresponde realizar la anulación?",
-    correct: "Solo para pagos duplicados o rechazados, cuando impacta el pago, está fuera de plazo sin débito en Simetrik ni portal, sin regalo aplicado y el estado en portal es 'Precaución confirme la operación'.",
+    q: "El status de conciliacion Compensated que significa?",
+    correct: "Que la devolución y la liquidación se efectuaron en el mismo momento; no hay cargo para el usuario.",
     wrong: [
-      "Siempre que el usuario solicite una devolución y el pago esté refunded en OneTool.",
-      "Cuando el pago está en estado 'Not Reconciled' y tiene más de 15 días desde el refund.",
-      "Cuando el refund tiene estado 'Approved' y no se encuentra débito en Simetrik."
+      "Que el pago no esta liquidado.",
+      "La devolucion fue generada y aplicada",
+      "Que debese aplicar cashback."
     ]
   },
   {
@@ -349,12 +349,12 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "En el flujo de Pago Rechazado TC/TD (ALL SITES), si el pago rechazado NO impacta en las liquidaciones de Simetrik, ¿qué se debe hacer?",
-    correct: "Responder a CX con el text blaze 'hsprec'.",
+    q: "Para aplicar un cashback a un caso de Refunds, se debe asociar que informacion?",
+    correct: "El Refund ID",
     wrong: [
-      "Anular por portal Credibanco y responder a CX con 'dupsi'.",
-      "Aplicar DEC directamente sin consultas adicionales.",
-      "Derivar para Terceros para validación con el equipo de GCO."
+      "El numero de caso CX",
+      "El monto total de la compra",
+      "Al user correspondiente"
     ]
   },
   {
@@ -367,12 +367,12 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "En el flujo de Devolución de Pagos con Tarjeta Redelcom (MLC), ¿qué debe enviarse obligatoriamente junto con el caso?",
-    correct: "El comprobante de la transacción, además de datos como número de boleta, RUT, nombre del cliente, número POS, fecha/hora, últimos 4 dígitos de la tarjeta, código de autorización y monto a anular.",
+    q: "Para pagos TC/TD Prepaid cual status puede tener?",
+    correct: "By Admin y BPP",
     wrong: [
-      "Solo el Payment ID y el monto a devolver son suficientes para procesar el caso.",
-      "El extracto bancario del usuario mostrando el cargo realizado.",
-      "El número de caso de CX One y la descripción del problema reportado por el seller."
+      "Chargeback in progress",
+      "Pending_processing",
+      "No gestionamos casos con Prepaid"
     ]
   },
   {
@@ -385,21 +385,21 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "En MLM - BANCOMER, al buscar en el portal para devoluciones, si el estado del pago es 'Conciliado', ¿qué significa?",
-    correct: "No cuenta con devolución y se puede anular por el portal.",
+    q: "Podemos tener pagos con status CANCELLED/REJECTED que generan un payment, que debemos tener en cuenta?",
+    correct: "Si hay un refund creado y reconciled",
     wrong: [
-      "La devolución ya fue realizada exitosamente al medio de pago.",
-      "El pago fue rechazado por la procesadora y debe ser reprocesado.",
+      "Si el user esta activo",
+      "El pago fue rechazado por la procesadora.",
       "La devolución está pendiente y se debe esperar el plazo establecido."
     ]
   },
   {
-    q: "Para las Excepciones - Big Seller (Prioritarias), si la devolución de un seller como Easy, McDonald's o Ticketmaster está fuera de plazo (pasados 30 días), ¿dónde debe realizarse el DEC?",
-    correct: "A la cuenta del seller (y no al medio de pago del buyer).",
+    q: "Compras carrito generan un pago splitter, debemos siempre buscar si tienen que tipo de pago?",
+    correct: "Pagos OUTBOUND",
     wrong: [
-      "Al medio de pago del buyer (tarjeta de crédito o débito utilizada en la compra).",
-      "A la cuenta interna de Mercado Libre para que gestione la devolución.",
-      "Se aplica cashback directamente al buyer sin necesidad de autorización especial."
+      "Pagos INBOUND",
+      "Pagos rechazados",
+      "Pagos duplicados"
     ]
   }
 ];
