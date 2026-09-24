@@ -516,11 +516,36 @@ function desativarVigilancia(){document.removeEventListener('visibilitychange',h
 function handleSaidaTela(){
   if(!quizAtivo)return;
   if(document.visibilityState==='hidden'||!document.hasFocus()){
-    quizAtivo=false;pararTimer();desativarVigilancia();
+    quizAtivo=false;pararTimer();desativarVigilancia();pararDeteccaoDevTools();
     alert('⚠️ Detectamos que saliste de la pantalla de la evaluación. Por seguridad, la evaluación se reiniciará desde cero.');
     location.reload();
   }
 }
+
+/* BLOQUEO DE DEVTOOLS / CLIC DERECHO / ATAJOS */
+function bloquearClickDerecho(e){if(quizAtivo)e.preventDefault();}
+function bloquearAtalhosTeclado(e){
+  if(!quizAtivo)return;
+  const bloquear=e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C','K'].includes(e.key.toUpperCase()))||(e.ctrlKey&&e.key.toUpperCase()==='U')||(e.metaKey&&e.altKey&&['I','J','C'].includes(e.key.toUpperCase()));
+  if(bloquear){e.preventDefault();e.stopPropagation();return false;}
+}
+let devtoolsCheckInterval=null;
+function iniciarDeteccaoDevTools(){
+  const limiar=160;
+  devtoolsCheckInterval=setInterval(()=>{
+    if(!quizAtivo)return;
+    const abertoPorLargura=window.outerWidth-window.innerWidth>limiar;
+    const abertoPorAltura=window.outerHeight-window.innerHeight>limiar;
+    if(abertoPorLargura||abertoPorAltura){
+      quizAtivo=false;pararTimer();desativarVigilancia();clearInterval(devtoolsCheckInterval);
+      alert('⚠️ Detectamos que abriste las herramientas de desarrollador. Por seguridad, la evaluación se reiniciará desde cero.');
+      location.reload();
+    }
+  },800);
+}
+function pararDeteccaoDevTools(){clearInterval(devtoolsCheckInterval);}
+document.addEventListener('contextmenu',bloquearClickDerecho);
+document.addEventListener('keydown',bloquearAtalhosTeclado);
 
 function startEval(){
   const nome=document.getElementById('inp-nome').value.trim();
@@ -537,7 +562,7 @@ function startEval(){
   document.getElementById('id-screen').style.display='none';
   document.getElementById('quiz-wrap').style.display='block';
   quizAtivo=true;resultadoJaMostrado=false;
-  iniciarTimer();ativarVigilancia();
+  iniciarTimer();ativarVigilancia();iniciarDeteccaoDevTools();
   buildQuiz();window.scrollTo({top:0,behavior:'smooth'});
 }
 document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.getElementById('id-screen').style.display!=='none')startEval();});
@@ -584,7 +609,7 @@ function updateProgress(){
 }
 
 function showResults(porTempo){
-  resultadoJaMostrado=true;quizAtivo=false;pararTimer();desativarVigilancia();
+  resultadoJaMostrado=true;quizAtivo=false;pararTimer();desativarVigilancia();pararDeteccaoDevTools();
   answered={};let gqCalc=0;
   CONFIG.sections.forEach(sec=>{sec.questions.forEach(qObj=>{gqCalc++;answered[gqCalc]=selected[gqCalc]!==undefined?(selected[gqCalc]===qObj.correct):false;});});
   const tot=totalQ(),ok=Object.values(answered).filter(Boolean).length;
@@ -627,7 +652,7 @@ function sendToSheets(data){
 }
 
 function retryEval(){
-  pararTimer();desativarVigilancia();quizAtivo=false;
+  pararTimer();desativarVigilancia();pararDeteccaoDevTools();quizAtivo=false;
   document.getElementById('badge-timer').style.display='none';
   userName='';userEmail='';
   document.getElementById('inp-nome').value='';document.getElementById('inp-email').value='';
