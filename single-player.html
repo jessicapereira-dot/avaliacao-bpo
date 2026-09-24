@@ -374,9 +374,6 @@ let CONFIG = {
         { q:"¿Cuáles son los servicios que forman parte del flujo Single Player?",
           opts:["Compra de productos físicos, envío a domicilio y pago en cuotas con tarjeta de crédito.","Recarga de celulares, pago de servicios, recarga de antena, Digital Goods y recarga de tarjeta de transporte.","Transferencias bancarias, inversiones y retiros de efectivo en cajeros automáticos.","Solo recarga de celulares y Digital Goods, ya que son los únicos aprobados para LATAM."],
           correct:1, fb_ok:"✅ ¡Correcto! Los servicios SP incluyen: recarga de celulares, pago de servicios, recarga de antena, Digital Goods y recarga de tarjeta de transporte.", fb_err:"❌ Incorrecto. Los servicios SP son: recarga de celulares, pago de servicios, recarga de antena, Digital Goods y recarga de tarjeta de transporte." },
-        { q:"¿Cuál es el plazo correcto del flujo de pagos Single Player desde el momento del pago hasta la conciliación?",
-          opts:["D (pago) → +12 horas (pago acreditado) → D+2 (pago conciliado).","D (pago) → +6 horas (pago acreditado) → D+1 (pago conciliado).","D (pago) → +24 horas (pago acreditado) → D+3 (pago conciliado).","D (pago) → +1 hora (pago acreditado) → D+1 (pago conciliado)."],
-          correct:1, fb_ok:"✅ ¡Correcto! El flujo es D (pago) → +6 horas (pago acreditado) → D+1 (pago conciliado).", fb_err:"❌ Incorrecto. El plazo correcto es: D → +6 horas (acreditado) → D+1 (conciliado)." },
         { q:"¿Cómo se identifica que un pago es Single Player a través de OneTool?",
           opts:["En BU aparece 'SINGLE PLAYER' y en SBU aparece 'WALLET'.","En BU aparece 'WALLET' (o POINT) y en SBU aparece 'SINGLE PLAYER'.","El campo 'Procesamiento' indica 'Single Player' en la pantalla de pagos.","Se identifica porque el Marketplace siempre aparece como 'MELI' en los pagos SP."],
           correct:1, fb_ok:"✅ ¡Correcto! En BU siempre aparece WALLET (o POINT) y en SBU siempre aparece SINGLE PLAYER.", fb_err:"❌ Incorrecto. Para identificar un pago SP en OneTool: BU = WALLET o POINT, y SBU = SINGLE PLAYER." }
@@ -394,9 +391,6 @@ let CONFIG = {
         { q:"Si el Payment = Approved y el Provider aparece 'vacío/en blanco' en el Admin SP, ¿cuál es el procedimiento correcto?",
           opts:["Analizar en el Admin SP y, si el Provider también aparece vacío o rechazado allí, aplicar el REFUND.","Cancelar el pago directamente sin necesidad de validación adicional.","Informar al usuario que el pago se procesó correctamente y no se puede devolver.","Esperar 48 horas antes de tomar cualquier acción para que el sistema se concilie."],
           correct:0, fb_ok:"✅ ¡Correcto! Se analiza en el Admin SP y si también aparece Provider vacío o rechazado, se aplica el REFUND.", fb_err:"❌ Incorrecto. Cuando el Provider está vacío, se analiza en el Admin SP y si también aparece vacío o rechazado, se aplica el REFUND." },
-        { q:"En Simetrik v2, cuando el pago está 'liquidado' y el payment está 'Aprobado', ¿qué se debe hacer?",
-          opts:["Aplicar el REFUND directamente desde el Admin SP.","Informar que el pago se generó correctamente y adjuntar el Transaction ID.","Cancelar el pago y derivar a Terceros para gestión.","Devolver el dinero al usuario sin consultar las liquidaciones."],
-          correct:1, fb_ok:"✅ ¡Correcto! Si está liquidado + payment aprobado, se informa que el pago se generó correctamente y se adjunta el Transaction ID.", fb_err:"❌ Incorrecto. Si está liquidado + payment aprobado, se informa que se generó correctamente y se adjunta el Transaction ID." },
         { q:"¿Cuándo se debe revisar Simetrik para validar un pago fuera de plazo?",
           opts:["Inmediatamente después de que el usuario reporta el problema, sin importar el tiempo.","Siempre debe verse 24 horas posterior al pago para tener información completa de liquidación.","Solo a partir de los 3 días hábiles después del pago.","En cualquier momento, ya que Simetrik se actualiza en tiempo real."],
           correct:1, fb_ok:"✅ ¡Correcto! Simetrik debe revisarse siempre 24 horas posterior al pago.", fb_err:"❌ Incorrecto. Simetrik debe revisarse siempre 24 horas posterior al pago." }
@@ -417,20 +411,6 @@ let CONFIG = {
         { q:"En un Pago Duplicado donde NINGUNO de los pagos fue liquidado por la entidad, ¿qué se debe hacer?",
           opts:["Devolver solo uno de los dos pagos y mantener el otro como referencia.","Informar al usuario que los pagos fueron acreditados y no se puede hacer nada.","Realizar la devolución de ambos pagos a través de la herramienta Admin de Single Player.","Derivar el caso directamente a PCO sin realizar ninguna acción previa."],
           correct:2, fb_ok:"✅ ¡Correcto! Si ninguno fue liquidado, se devuelven ambos pagos a través del Admin SP.", fb_err:"❌ Incorrecto. Si ninguno fue liquidado, se realiza la devolución de ambos por Admin SP." }
-      ]
-    },
-    {
-      title: "Pago Rechazado", icon: "❌",
-      questions: [
-        { q:"¿Cuál es la primera acción al gestionar un Pago Rechazado en Single Player?",
-          opts:["Aplicar inmediatamente el REFUND desde el Admin SP sin necesidad de verificar.","Corroborar que nos hayan enviado el número de Payment y revisarlo en el Admin de Single Player.","Contactar directamente al proveedor para que realice la devolución.","Esperar 72 horas para que el sistema revierta el pago automáticamente."],
-          correct:1, fb_ok:"✅ ¡Correcto! El primer paso es corroborar el número de Payment y revisarlo en el Admin SP.", fb_err:"❌ Incorrecto. La primera acción es corroborar el número de Payment y luego revisarlo en el Admin SP." },
-        { q:"En un Pago Rechazado, si el pago aparece inconsistente en el Admin pero fue liquidado por la entidad, ¿qué se hace?",
-          opts:["Adjuntar el comprobante o Transaction ID como evidencia del pago exitoso.","Realizar la devolución por Admin SP sin verificar la liquidación.","Cancelar el pago y derivar a Terceros para su gestión.","Ignorar el caso porque el error es del sistema y no del usuario."],
-          correct:0, fb_ok:"✅ ¡Correcto! Si fue liquidado, se adjunta el comprobante o Transaction ID.", fb_err:"❌ Incorrecto. Si fue liquidado por la entidad, se adjunta el comprobante o Transaction ID." },
-        { q:"¿Qué ocurre si el pago aparece inconsistente en el Admin y NO fue liquidado por la entidad?",
-          opts:["Se procede a realizar la devolución por Admin SP al usuario.","Se informa al usuario que el pago fue exitoso y no se puede hacer nada.","Se deriva el caso a PCO para aprobación antes de cualquier acción.","Se espera que el sistema lo resuelva automáticamente en D+1."],
-          correct:0, fb_ok:"✅ ¡Correcto! Si no fue liquidado, se procede a realizar la devolución por Admin SP.", fb_err:"❌ Incorrecto. Si no fue liquidado, se realiza la devolución por Admin SP." }
       ]
     },
     {
