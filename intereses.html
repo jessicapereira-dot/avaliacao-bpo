@@ -393,7 +393,7 @@ let CONFIG = {
           fb_err: "❌ Incorrecto. Para casos administrados por MONZA se utiliza siempre: CANCELACIÓN DE CARGO POR MORA."
         },
         {
-          q: "¿Qué tipo de ajuste se selecciona al realizar una bonificación de intereses al usuario?",
+          q: "¿Qué tipo de ajuste se selecciona para quitar un intereses erroneo ?",
           opts: [
             "Ajuste por débito, ya que se descuenta de la deuda del usuario.",
             "Ajuste por crédito, ya que se acredita un valor en la próxima factura del usuario.",
@@ -437,7 +437,7 @@ let CONFIG = {
           q: "¿Qué sucede cuando el usuario es identificado como 'Buen Pagador' y reclama intereses por problemas de app o BUG?",
           opts: [
             "Se devuelve el caso a la cola de origen sin aplicar ningún ajuste.",
-            "Se aplica el Script 07 porque los intereses son considerados correctos.",
+            "No se aplica porque los intereses son considerados correctos.",
             "Se puede proceder con la bonificación de los intereses reclamados.",
             "Se deriva automáticamente al equipo de Cobranza (Creliq)."
           ],
@@ -451,40 +451,40 @@ let CONFIG = {
       title: "Scripts & Situaciones Especiales", icon: "📝",
       questions: [
         {
-          q: "¿Cuándo se debe utilizar el Script 07?",
+          q: "¿Qué status de cuenta no puede hacer ajustes?",
           opts: [
-            "Cuando el usuario es un Buen Pagador y reclama intereses indebidos.",
-            "Cuando el usuario tiene pagos anteriores siempre atrasados o realiza pagos parciales sin ningún problema MELI.",
-            "Cuando los intereses se encuentran en la factura abierta y no se puede bonificar aún.",
-            "Cuando el ajuste ya fue aplicado y el usuario pregunta cuándo lo verá en su factura."
+            "Status Cancelada",
+            "Status Pending",
+            "Status Bloqueado",
+            "Status Activa"
           ],
           correct: 1,
-          fb_ok: "✅ ¡Correcto! El Script 07 se utiliza cuando el usuario tiene historial de pagos atrasados o pagos parciales sin ningún problema de la plataforma MELI.",
-          fb_err: "❌ Incorrecto. El Script 07 aplica cuando el usuario tiene pagos siempre atrasados o parciales sin ningún problema MELI — el cobro de intereses es correcto."
+          fb_ok: "✅ ¡Correcto! Status Cancelada",
+          fb_err: "❌ Incorrecto. Status Pending"
         },
         {
-          q: "¿Qué indica el Script 08 al usuario?",
+          q: "¿Cual informacion es importante para un archivo masivo de ajustes ",
           opts: [
-            "Que el reembolso fue aplicado y estará visible en D+1.",
-            "Que los intereses se encuentran en la factura abierta y, para bonificar el valor total, es necesario esperar a que la factura esté cerrada.",
-            "Que el caso no corresponde a FOS y debe ser resuelto por otra área.",
-            "Que el usuario no califica para el reembolso por tener pagos parciales."
+            "CCARD_ACCOUNT",
+            "Payment ID",
+            "Status da cuenta",
+            "Amount"
           ],
           correct: 1,
-          fb_ok: "✅ ¡Correcto! El Script 08 indica que los intereses están en factura abierta y que FOS podrá realizar los ajustes cuando la factura esté cerrada.",
-          fb_err: "❌ Incorrecto. El Script 08 informa que los intereses están en la factura abierta y que la bonificación se aplicará cuando la factura esté cerrada."
+          fb_ok: "✅ ¡Correcto! CCARD_ACCOUNT",
+          fb_err: "❌ Incorrecto. Status da cuenta"
         },
         {
           q: "¿Qué se debe hacer si al aplicar el ajuste de bonificación ocurre un error en el sistema?",
           opts: [
             "Intentar aplicar el ajuste nuevamente hasta que funcione.",
             "Informar al usuario que no es posible realizar el reembolso.",
-            "Abrir un JIRA asociando un BUG y derivarlo al equipo de IM.",
+            "Consultar a equipo de Cards por el channel de slack",
             "Derivar el caso directamente a PCO para aprobación manual."
           ],
           correct: 2,
-          fb_ok: "✅ ¡Correcto! Si ocurre un error en el ajuste, se debe abrir un JIRA a través del proceso de 'Problemas con Tarjetas emitidas por Mercado Pago' y derivarlo al equipo de IM.",
-          fb_err: "❌ Incorrecto. Si hay error en el ajuste, se debe abrir un JIRA asociando un BUG y derivarlo al equipo de IM."
+          fb_ok: "✅ ¡Correcto! Consultar a equipo de Cards por el channel de slack",
+          fb_err: "❌ Incorrecto. Derivar el caso directamente a PCO para aprobación manual"
         }
       ]
     }
