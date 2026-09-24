@@ -444,13 +444,48 @@ function handleSaidaTela() {
     quizAtivo = false;
     pararTimer();
     desativarVigilancia();
+    pararDeteccaoDevTools();
     alert('⚠️ Detectamos que saliste de la pantalla de la evaluación. Por seguridad, la evaluación se reiniciará desde cero.');
     reiniciarTudo();
   }
 }
+
+/* BLOQUEO DE DEVTOOLS / CLIC DERECHO / ATAJOS */
+function bloquearClickDerecho(e) { if (quizAtivo) e.preventDefault(); }
+function bloquearAtalhosTeclado(e) {
+  if (!quizAtivo) return;
+  const bloquear =
+    e.key === 'F12' ||
+    (e.ctrlKey && e.shiftKey && ['I','J','C','K'].includes(e.key.toUpperCase())) ||
+    (e.ctrlKey && e.key.toUpperCase() === 'U') ||
+    (e.metaKey && e.altKey && ['I','J','C'].includes(e.key.toUpperCase()));
+  if (bloquear) { e.preventDefault(); e.stopPropagation(); return false; }
+}
+let devtoolsCheckInterval = null;
+function iniciarDeteccaoDevTools() {
+  const limiar = 160;
+  devtoolsCheckInterval = setInterval(() => {
+    if (!quizAtivo) return;
+    const abertoPorLargura = window.outerWidth - window.innerWidth > limiar;
+    const abertoPorAltura  = window.outerHeight - window.innerHeight > limiar;
+    if (abertoPorLargura || abertoPorAltura) {
+      quizAtivo = false;
+      pararTimer();
+      desativarVigilancia();
+      clearInterval(devtoolsCheckInterval);
+      alert('⚠️ Detectamos que abriste las herramientas de desarrollador. Por seguridad, la evaluación se reiniciará desde cero.');
+      reiniciarTudo();
+    }
+  }, 800);
+}
+function pararDeteccaoDevTools() { clearInterval(devtoolsCheckInterval); }
+document.addEventListener('contextmenu', bloquearClickDerecho);
+document.addEventListener('keydown', bloquearAtalhosTeclado);
+
 function reiniciarTudo() {
   pararTimer();
   desativarVigilancia();
+  pararDeteccaoDevTools();
   quizAtivo = false;
   document.getElementById('quiz-screen').style.display = 'none';
   document.getElementById('result-screen').style.display = 'none';
@@ -475,6 +510,7 @@ document.getElementById('btn-start').addEventListener('click', () => {
   quizAtivo = true;
   iniciarTimer();
   ativarVigilancia();
+  iniciarDeteccaoDevTools();
   shuffleQuestions();
   renderQuestion();
 });
@@ -533,6 +569,7 @@ function showResult(porTempo) {
   quizAtivo = false;
   pararTimer();
   desativarVigilancia();
+  pararDeteccaoDevTools();
 
   document.getElementById('quiz-screen').style.display = 'none';
   document.getElementById('result-screen').style.display = 'block';
