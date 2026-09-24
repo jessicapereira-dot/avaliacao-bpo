@@ -66,6 +66,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
 .otxt{font-size:.85rem;line-height:1.5;color:var(--text)}
 .opt.sel{border-color:var(--mp);background:var(--mp-light)}
 .opt.sel .oball{border-color:var(--mp);background:var(--mp)}
+.opt.sel-neutral{border-color:var(--mp);background:var(--mp-light)}
+.opt.sel-neutral .oball{border-color:var(--mp);background:var(--mp)}
 .opt.r-ok{border-color:var(--ok);background:var(--ok-bg)}
 .opt.r-ok .oball{border-color:var(--ok);background:var(--ok);color:#fff}
 .opt.r-err{border-color:var(--err);background:var(--err-bg)}
@@ -74,6 +76,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
 .opt.locked:hover{border-color:var(--border);background:#F5F5F5}
 .opt.r-ok.locked:hover{border-color:var(--ok);background:var(--ok-bg)}
 .opt.r-err.locked:hover{border-color:var(--err);background:var(--err-bg)}
+.opt.sel-neutral.locked:hover{border-color:var(--mp);background:var(--mp-light)}
 .fb{display:none;margin-top:12px;padding:11px 15px;border-radius:9px;font-size:.83rem;line-height:1.55;font-weight:500}
 .fb.show{display:flex;align-items:flex-start;gap:9px}
 .fb.ok{background:var(--ok-bg);color:#065F46;border-left:4px solid var(--ok)}
@@ -172,6 +175,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
       <p id="hdr-sub">Mercado Pago · FOS MLB · Agosto 2024</p>
     </div>
   </div>
+  <span id="badge-timer" style="display:none;background:#eee;border-radius:20px;padding:6px 16px;font-size:.85rem;font-weight:700;color:#333;margin-right:10px;">⏱ 30:00</span>
   <button class="btn-editor" onclick="openEditor()">⚙️ Modo Editor</button>
 </div>
 
@@ -193,6 +197,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
       </div>
       <button class="btn-start" onclick="startEval()">Comenzar evaluación →</button>
       <div class="id-note">🔒 Tus datos se usan solo para registro interno</div>
+      <div style="margin-top:14px;padding:12px 14px;background:#fff8e6;border:1.3px solid #f0d98c;border-radius:8px;font-size:.78rem;color:#7a5b00;line-height:1.5;text-align:left;">
+        ⚠️ Tienes <strong>30 minutos</strong> para completar la evaluación.<br>
+        No cambies de pestaña ni minimices la ventana: si lo haces, la evaluación se reiniciará desde cero.
+      </div>
     </div>
   </div>
 
@@ -211,6 +219,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
       <div class="prog-bg"><div class="prog-fill" id="prog-fill"></div></div>
     </div>
     <div id="quiz-area"></div>
+    <div style="text-align:center;margin-top:10px;">
+      <button id="btn-finalizar-quiz" onclick="showResults()"
+        style="display:none;padding:14px 40px;background:linear-gradient(135deg,var(--mp),var(--mp-dark));
+        color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;
+        box-shadow:0 4px 14px rgba(0,158,227,.35);">
+        ✅ Finalizar evaluación
+      </button>
+    </div>
     <div class="results" id="results">
       <div style="font-size:2rem">🎯</div>
       <h2 style="font-size:1.25rem;font-weight:800;color:var(--navy);margin:8px 0 4px">Resultado Final</h2>
@@ -377,16 +393,16 @@ let CONFIG = {
           fb_err: "❌ Incorrecto. Para casos administrados por MONZA se utiliza siempre: CANCELACIÓN DE CARGO POR MORA."
         },
         {
-          q: "¿Cual status cuenta no si puede hacer ajuste?",
+          q: "¿Qué tipo de ajuste se selecciona al realizar una bonificación de intereses al usuario?",
           opts: [
-            "Status Pending",
-            "Status Cancelada",
-            "Status Activa",
-            "Status Bloqueada"
+            "Ajuste por débito, ya que se descuenta de la deuda del usuario.",
+            "Ajuste por crédito, ya que se acredita un valor en la próxima factura del usuario.",
+            "Ajuste neutro, sin impacto en la factura.",
+            "Ajuste por transferencia directa a la cuenta Wallet del usuario."
           ],
           correct: 1,
-          fb_ok: "✅ ¡Correcto! Se selecciona 'Status Cancelada",
-          fb_err: "❌ Incorrecto. Se selecciona 'Status Pending"
+          fb_ok: "✅ ¡Correcto! Se selecciona 'Ajuste por crédito', que acredita un valor en la próxima factura del usuario.",
+          fb_err: "❌ Incorrecto. Se selecciona 'Ajuste por crédito', que realizará un crédito en la próxima factura del usuario."
         }
       ]
     },
@@ -435,40 +451,40 @@ let CONFIG = {
       title: "Scripts & Situaciones Especiales", icon: "📝",
       questions: [
         {
-          q: "¿Que datos debe tener el archivo para ajuste masivo?",
+          q: "¿Cuándo se debe utilizar el Script 07?",
           opts: [
-            "Payment ID, User ID, Amount",
-            "Type, Reason, Amount, User ID, Account ID, Origin Ticket, Ticket ID",
-            "Reason, Amount, User",
-            "Amount, User ID."
+            "Cuando el usuario es un Buen Pagador y reclama intereses indebidos.",
+            "Cuando el usuario tiene pagos anteriores siempre atrasados o realiza pagos parciales sin ningún problema MELI.",
+            "Cuando los intereses se encuentran en la factura abierta y no se puede bonificar aún.",
+            "Cuando el ajuste ya fue aplicado y el usuario pregunta cuándo lo verá en su factura."
           ],
           correct: 1,
-          fb_ok: "✅ ¡Correcto! Type, Reason, Amount, User ID, Account ID, Origin Ticket, Ticket IDde la plataforma MELI.",
-          fb_err: "❌ Incorrecto. Reason, Amount, User"
+          fb_ok: "✅ ¡Correcto! El Script 07 se utiliza cuando el usuario tiene historial de pagos atrasados o pagos parciales sin ningún problema de la plataforma MELI.",
+          fb_err: "❌ Incorrecto. El Script 07 aplica cuando el usuario tiene pagos siempre atrasados o parciales sin ningún problema MELI — el cobro de intereses es correcto."
         },
         {
-          q: "¿Cual es el camino para hacer ajustes masivos desde Admin Credits?",
+          q: "¿Qué indica el Script 08 al usuario?",
           opts: [
-            "OneTool >  Refunds > Aplicar Refund",
-            "Tarjeta de Credito > Ajustes de Cuentas > Ajustes Financeiros > Ajustes Masivos",
-            "Tarjeta de Credito > Gestion de Usuários > Resumenes > Aplicar ",
-            "Tarjeta de Credito > Ajustes de Cuentas > Ajustes Financeiros > Ajustes Individuales"
+            "Que el reembolso fue aplicado y estará visible en D+1.",
+            "Que los intereses se encuentran en la factura abierta y, para bonificar el valor total, es necesario esperar a que la factura esté cerrada.",
+            "Que el caso no corresponde a FOS y debe ser resuelto por otra área.",
+            "Que el usuario no califica para el reembolso por tener pagos parciales."
           ],
           correct: 1,
-          fb_ok: "✅ ¡Correcto! Tarjeta de Credito > Ajustes de Cuentas > Ajustes Financeiros > Ajustes Masivos",
-          fb_err: "❌ Incorrecto. Tarjeta de Credito > Gestion de Usuários > Resumenes > Aplicar "
+          fb_ok: "✅ ¡Correcto! El Script 08 indica que los intereses están en factura abierta y que FOS podrá realizar los ajustes cuando la factura esté cerrada.",
+          fb_err: "❌ Incorrecto. El Script 08 informa que los intereses están en la factura abierta y que la bonificación se aplicará cuando la factura esté cerrada."
         },
         {
-          q: "¿Si tenemos un ajuste para fallecido es importante que la cuenta sea:",
+          q: "¿Qué se debe hacer si al aplicar el ajuste de bonificación ocurre un error en el sistema?",
           opts: [
-            "Posteriormente al ajuste > activada",
-            "Posteriormente al ajuste > ajustada",
-            "Posteriormente al ajuste > cancelada",
-            "Posteriormente al ajuste > bloqueada"
+            "Intentar aplicar el ajuste nuevamente hasta que funcione.",
+            "Informar al usuario que no es posible realizar el reembolso.",
+            "Abrir un JIRA asociando un BUG y derivarlo al equipo de IM.",
+            "Derivar el caso directamente a PCO para aprobación manual."
           ],
           correct: 2,
-          fb_ok: "✅ ¡Correcto! Posteriormente al ajuste > cancelada",
-          fb_err: "❌ Incorrecto. Posteriormente al ajuste > bloqueada"
+          fb_ok: "✅ ¡Correcto! Si ocurre un error en el ajuste, se debe abrir un JIRA a través del proceso de 'Problemas con Tarjetas emitidas por Mercado Pago' y derivarlo al equipo de IM.",
+          fb_err: "❌ Incorrecto. Si hay error en el ajuste, se debe abrir un JIRA asociando un BUG y derivarlo al equipo de IM."
         }
       ]
     }
@@ -476,6 +492,35 @@ let CONFIG = {
 };
 
 let answered={},selected={},editorUnlocked=false,editorTab=0,userName='',userEmail='';
+let quizAtivo=false, tempoRestante=30*60, timerInterval=null, resultadoJaMostrado=false;
+
+function iniciarTimer(){
+  tempoRestante=30*60;atualizarBadgeTimer();
+  document.getElementById('badge-timer').style.display='inline-block';
+  clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    tempoRestante--;atualizarBadgeTimer();
+    if(tempoRestante<=0){clearInterval(timerInterval);quizAtivo=false;if(!resultadoJaMostrado)showResults(true);}
+  },1000);
+}
+function pararTimer(){clearInterval(timerInterval);}
+function atualizarBadgeTimer(){
+  const el=document.getElementById('badge-timer');if(!el)return;
+  const m=Math.floor(tempoRestante/60),s=tempoRestante%60;
+  el.textContent=`⏱ ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.style.background=tempoRestante<=60?'#ff5c5c':tempoRestante<=300?'#ffdd55':'#eee';
+  el.style.color=tempoRestante<=300?(tempoRestante<=60?'#fff':'#7a5b00'):'#333';
+}
+function ativarVigilancia(){document.addEventListener('visibilitychange',handleSaidaTela);window.addEventListener('blur',handleSaidaTela);}
+function desativarVigilancia(){document.removeEventListener('visibilitychange',handleSaidaTela);window.removeEventListener('blur',handleSaidaTela);}
+function handleSaidaTela(){
+  if(!quizAtivo)return;
+  if(document.visibilityState==='hidden'||!document.hasFocus()){
+    quizAtivo=false;pararTimer();desativarVigilancia();
+    alert('⚠️ Detectamos que saliste de la pantalla de la evaluación. Por seguridad, la evaluación se reiniciará desde cero.');
+    location.reload();
+  }
+}
 
 function startEval(){
   const nome=document.getElementById('inp-nome').value.trim();
@@ -491,6 +536,8 @@ function startEval(){
   userName=nome;userEmail=email;
   document.getElementById('id-screen').style.display='none';
   document.getElementById('quiz-wrap').style.display='block';
+  quizAtivo=true;resultadoJaMostrado=false;
+  iniciarTimer();ativarVigilancia();
   buildQuiz();window.scrollTo({top:0,behavior:'smooth'});
 }
 document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.getElementById('id-screen').style.display!=='none')startEval();});
@@ -511,7 +558,7 @@ function buildQuiz(){
       gq++;
       const card=document.createElement('div');card.className='qcard';card.id=`qcard-${gq}`;
       const optsHtml=qObj.opts.map((o,oi)=>`<label class="opt" data-q="${gq}" data-idx="${oi}" onclick="selectOpt(${gq},${oi})"><input type="radio" name="q${gq}" value="${oi}"><div class="oball" id="ball-${gq}-${oi}"></div><div class="otxt">${o}</div></label>`).join('');
-      card.innerHTML=`<div class="qnum">Pregunta ${gq}</div><div class="qtxt">${qObj.q}</div><div class="opts">${optsHtml}</div><button class="cbtn" id="btn-${gq}" onclick="confirmAnswer(${gq})">Confirmar respuesta ✓</button><div class="fb" id="fb-${gq}"></div>`;
+      card.innerHTML=`<div class="qnum">Pregunta ${gq}</div><div class="qtxt">${qObj.q}</div><div class="opts">${optsHtml}</div>`;
       div.appendChild(card);
     });
     area.appendChild(div);
@@ -522,38 +569,24 @@ function buildQuiz(){
 function totalQ(){return CONFIG.sections.reduce((a,s)=>a+s.questions.length,0);}
 
 function selectOpt(q,idx){
-  if(answered[q]!==undefined)return;
-  document.querySelectorAll(`.opt[data-q="${q}"]`).forEach(o=>o.classList.remove('sel'));
-  document.querySelector(`.opt[data-q="${q}"][data-idx="${idx}"]`).classList.add('sel');
   selected[q]=idx;
-  const btn=document.getElementById(`btn-${q}`);if(btn)btn.classList.add('vis');
-}
-
-function confirmAnswer(gq){
-  if(answered[gq]!==undefined||selected[gq]===undefined)return;
-  let correctIdx=0,qObj=null,count=0;
-  outer:for(const sec of CONFIG.sections){for(const q of sec.questions){count++;if(count===gq){qObj=q;correctIdx=q.correct;break outer;}}}
-  const isOk=selected[gq]===correctIdx;answered[gq]=isOk;
-  const btn=document.getElementById(`btn-${gq}`);btn.disabled=true;btn.textContent=isOk?'✓ Correcto':'✗ Incorrecto';
-  document.querySelectorAll(`.opt[data-q="${gq}"]`).forEach(o=>{
-    const idx=parseInt(o.dataset.idx);o.classList.add('locked');o.classList.remove('sel');
-    if(idx===correctIdx){o.classList.add('r-ok');document.getElementById(`ball-${gq}-${idx}`).textContent='✓';}
-    else if(idx===selected[gq]&&!isOk){o.classList.add('r-err');document.getElementById(`ball-${gq}-${idx}`).textContent='✗';}
-  });
-  const fb=document.getElementById(`fb-${gq}`);fb.className=`fb show ${isOk?'ok':'err'}`;
-  fb.innerHTML=`<span class="fb-ico">${isOk?'✅':'❌'}</span><span>${isOk?qObj.fb_ok:qObj.fb_err}</span>`;
-  document.getElementById(`qcard-${gq}`).classList.add(isOk?'a-ok':'a-err');
+  document.querySelectorAll(`.opt[data-q="${q}"]`).forEach(o=>{o.classList.remove('sel-neutral');});
+  document.querySelector(`.opt[data-q="${q}"][data-idx="${idx}"]`).classList.add('sel-neutral');
   updateProgress();
-  if(Object.keys(answered).length===totalQ())setTimeout(showResults,600);
 }
 
 function updateProgress(){
-  const done=Object.keys(answered).length,tot=totalQ();
+  const done=Object.keys(selected).length,tot=totalQ();
   document.getElementById('prog-txt').textContent=`${done} / ${tot} respondidas`;
   document.getElementById('prog-fill').style.width=tot?`${(done/tot)*100}%`:'0%';
+  const btnFinalizar=document.getElementById('btn-finalizar-quiz');
+  if(btnFinalizar) btnFinalizar.style.display=(done===tot&&tot>0)?'inline-block':'none';
 }
 
-function showResults(){
+function showResults(porTempo){
+  resultadoJaMostrado=true;quizAtivo=false;pararTimer();desativarVigilancia();
+  answered={};let gqCalc=0;
+  CONFIG.sections.forEach(sec=>{sec.questions.forEach(qObj=>{gqCalc++;answered[gqCalc]=selected[gqCalc]!==undefined?(selected[gqCalc]===qObj.correct):false;});});
   const tot=totalQ(),ok=Object.values(answered).filter(Boolean).length;
   const score=tot>0?parseFloat(((ok/tot)*10).toFixed(1)):0;
   document.getElementById('r-score').textContent=score.toFixed(1);
@@ -566,6 +599,7 @@ function showResults(){
   if(score<CONFIG.thresholdLow){lvEl.textContent='❌ Necesita nivelamiento';lvEl.className='r-level lv-lo';msgEl.textContent='Tu puntuación está por debajo del mínimo. Repasá el manual de Reembolso de Intereses TC.';nivelLabel='Necesita nivelamiento';}
   else if(score<=CONFIG.thresholdHigh){lvEl.textContent='⚠️ Dentro del aprendizaje';lvEl.className='r-level lv-mi';msgEl.textContent='Estás dentro del aprendizaje esperado. Seguí repasando para consolidar el conocimiento.';nivelLabel='En aprendizaje';}
   else{lvEl.textContent='✅ Aprendizaje superado';lvEl.className='r-level lv-hi';msgEl.textContent='¡Excelente! Tu puntuación supera el mínimo. Dominás los principales flujos de Reembolso de Intereses TC.';nivelLabel='Aprendizaje superado';}
+  if(porTempo)msgEl.textContent='⏱ Se agotó el tiempo de 30 minutos. '+msgEl.textContent;
   let ssHtml='',gq=0,detalles=[];
   CONFIG.sections.forEach(sec=>{
     const qs=sec.questions.length;let okSec=0;
@@ -579,7 +613,7 @@ function showResults(){
   ['sending-box','sent-box','error-box'].forEach(id=>document.getElementById(id).classList.remove('show'));
   document.getElementById('results').classList.add('show');
   document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
-  sendToSheets({avaliacao:CONFIG.avaliacaoNome,nome:userName,email:userEmail,nota:score.toFixed(1),resultado:nivelLabel,corretas:ok,incorretas:tot-ok,total:tot,detalhes:detalles.join(' | ')});
+  sendToSheets({avaliacao:CONFIG.avaliacaoNome,nome:userName,email:userEmail,nota:score.toFixed(1),resultado:nivelLabel,corretas:ok,incorretas:tot-ok,total:tot,detalhes:detalles.join(' | ')+(porTempo?' | ⏱ TIEMPO AGOTADO':'')});
 }
 
 function sendToSheets(data){
@@ -593,6 +627,8 @@ function sendToSheets(data){
 }
 
 function retryEval(){
+  pararTimer();desativarVigilancia();quizAtivo=false;
+  document.getElementById('badge-timer').style.display='none';
   userName='';userEmail='';
   document.getElementById('inp-nome').value='';document.getElementById('inp-email').value='';
   document.getElementById('id-screen').style.display='block';document.getElementById('quiz-wrap').style.display='none';
