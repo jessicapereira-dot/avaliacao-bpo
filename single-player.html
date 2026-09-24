@@ -80,6 +80,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
 .otxt{font-size:.85rem;line-height:1.5;color:var(--text)}
 .opt.sel{border-color:var(--mp);background:var(--mp-light)}
 .opt.sel .oball{border-color:var(--mp);background:var(--mp)}
+.opt.sel-neutral{border-color:var(--mp);background:var(--mp-light)}
+.opt.sel-neutral .oball{border-color:var(--mp);background:var(--mp)}
 .opt.r-ok{border-color:var(--ok);background:var(--ok-bg)}
 .opt.r-ok .oball{border-color:var(--ok);background:var(--ok);color:#fff}
 .opt.r-err{border-color:var(--err);background:var(--err-bg)}
@@ -88,6 +90,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
 .opt.locked:hover{border-color:var(--border);background:#F5F5F5}
 .opt.r-ok.locked:hover{border-color:var(--ok);background:var(--ok-bg)}
 .opt.r-err.locked:hover{border-color:var(--err);background:var(--err-bg)}
+.opt.sel-neutral.locked:hover{border-color:var(--mp);background:var(--mp-light)}
 
 /* FEEDBACK */
 .fb{display:none;margin-top:12px;padding:11px 15px;border-radius:9px;font-size:.83rem;line-height:1.55;font-weight:500}
@@ -565,9 +568,7 @@ function buildQuiz() {
         </label>`).join('');
       card.innerHTML = `<div class="qnum">Pregunta ${gq}</div>
         <div class="qtxt">${qObj.q}</div>
-        <div class="opts">${optsHtml}</div>
-        <button class="cbtn" id="btn-${gq}" onclick="confirmAnswer(${gq})">Confirmar respuesta ✓</button>
-        <div class="fb" id="fb-${gq}"></div>`;
+        <div class="opts">${optsHtml}</div>`;
       div.appendChild(card);
     });
     area.appendChild(div);
@@ -582,35 +583,23 @@ function totalQ() { return CONFIG.sections.reduce((a,s)=>a+s.questions.length,0)
 // ══════════════════════════════════════════════
 function selectOpt(q, idx) {
   if (answered[q] !== undefined) return;
-  document.querySelectorAll(`.opt[data-q="${q}"]`).forEach(o=>o.classList.remove('sel'));
-  document.querySelector(`.opt[data-q="${q}"][data-idx="${idx}"]`).classList.add('sel');
-  selected[q] = idx;
-  const btn = document.getElementById(`btn-${q}`);
-  if (btn) btn.classList.add('vis');
-}
 
-function confirmAnswer(gq) {
-  if (answered[gq] !== undefined || selected[gq] === undefined) return;
-  let correctIdx = 0, qObj = null, count = 0;
+  let correctIdx = 0, count = 0;
   outer: for (const sec of CONFIG.sections) {
-    for (const q of sec.questions) { count++; if (count===gq){qObj=q;correctIdx=q.correct;break outer;} }
+    for (const qObj of sec.questions) { count++; if (count===q){correctIdx=qObj.correct;break outer;} }
   }
-  const isOk = selected[gq] === correctIdx;
-  answered[gq] = isOk;
-  const btn = document.getElementById(`btn-${gq}`);
-  btn.disabled = true; btn.textContent = isOk ? '✓ Correcto' : '✗ Incorrecto';
-  document.querySelectorAll(`.opt[data-q="${gq}"]`).forEach(o => {
-    const idx = parseInt(o.dataset.idx);
-    o.classList.add('locked'); o.classList.remove('sel');
-    if (idx === correctIdx) { o.classList.add('r-ok'); document.getElementById(`ball-${gq}-${idx}`).textContent='✓'; }
-    else if (idx === selected[gq] && !isOk) { o.classList.add('r-err'); document.getElementById(`ball-${gq}-${idx}`).textContent='✗'; }
+  const isOk = idx === correctIdx;
+  answered[q] = isOk;
+  selected[q] = idx;
+
+  document.querySelectorAll(`.opt[data-q="${q}"]`).forEach(o => {
+    o.classList.add('locked');
+    o.classList.remove('sel');
   });
-  const fb = document.getElementById(`fb-${gq}`);
-  fb.className = `fb show ${isOk?'ok':'err'}`;
-  fb.innerHTML = `<span class="fb-ico">${isOk?'✅':'❌'}</span><span>${isOk?qObj.fb_ok:qObj.fb_err}</span>`;
-  document.getElementById(`qcard-${gq}`).classList.add(isOk?'a-ok':'a-err');
+  document.querySelector(`.opt[data-q="${q}"][data-idx="${idx}"]`).classList.add('sel-neutral');
+
   updateProgress();
-  if (Object.keys(answered).length === totalQ()) setTimeout(showResults, 600);
+  if (Object.keys(answered).length === totalQ()) setTimeout(showResults, 400);
 }
 
 function updateProgress() {
