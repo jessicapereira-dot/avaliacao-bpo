@@ -49,6 +49,19 @@
     background: rgba(255,255,255,.2); border-radius: 20px;
     padding: 4px 14px; font-size: .8rem;
   }
+  .badge-timer {
+    position: absolute; top: 52px; right: 20px;
+    background: rgba(255,255,255,.2); border-radius: 20px;
+    padding: 4px 14px; font-size: .82rem; font-weight: 700;
+  }
+  .badge-timer.alerta { background: #ffdd55; color: #7a5b00; }
+  .badge-timer.critico { background: #ff5c5c; color: #fff; animation: pulsar 1s infinite; }
+  @keyframes pulsar { 0%,100%{opacity:1} 50%{opacity:.55} }
+  .aviso-regras {
+    margin-top: 18px; padding: 12px 14px; background: #fff8e6;
+    border: 1.3px solid #f0d98c; border-radius: 8px;
+    font-size: .78rem; color: #7a5b00; line-height: 1.5; text-align: left;
+  }
   .progresso-wrap { margin: 0 0 24px; }
   .progresso-label { display: flex; justify-content: space-between; font-size: .82rem; color: #555; margin-bottom: 6px; }
   .progresso-barra { background: #dde3ea; border-radius: 99px; height: 8px; }
@@ -70,6 +83,7 @@
   .opcao:hover { border-color: #009ee3; background: #f0f9ff; }
   .opcao.correta  { border-color: #1bbb6e; background: #edfaf4; color: #0d7040; }
   .opcao.incorreta{ border-color: #e84545; background: #fff0f0; color: #b02020; }
+  .opcao.selecionada { border-color: #009ee3; background: #f0f9ff; color: #005f8c; }
   .opcao.desabilitada { pointer-events: none; opacity: .55; }
   .letra-opcao {
     min-width: 26px; height: 26px; border-radius: 50%;
@@ -79,13 +93,6 @@
   }
   .opcao.correta   .letra-opcao { background: #1bbb6e; color: #fff; }
   .opcao.incorreta .letra-opcao { background: #e84545; color: #fff; }
-
-  .feedback-box {
-    margin-top: 16px; padding: 14px 16px; border-radius: 10px;
-    font-size: .91rem; line-height: 1.5; display: none;
-  }
-  .feedback-box.ok  { background: #edfaf4; border-left: 4px solid #1bbb6e; color: #0d5c36; }
-  .feedback-box.err { background: #fff0f0; border-left: 4px solid #e84545; color: #8a1a1a; }
 
   .btn-nav {
     padding: 11px 28px; border: none; border-radius: 8px;
@@ -173,6 +180,10 @@
     <input type="email" id="inp-email" placeholder="Tu e-mail corporativo" autocomplete="off">
     <button class="btn-primary" onclick="iniciarQuiz()">Comenzar evaluación</button>
     <p class="erro-id" id="erro-id">Por favor, completa nombre y e-mail.</p>
+    <div class="aviso-regras">
+      ⚠️ Tienes <strong>30 minutos</strong> para completar la evaluación.<br>
+      No cambies de pestaña ni minimices la ventana: si lo haces, la evaluación se reiniciará desde cero.
+    </div>
   </div>
 </div>
 
@@ -182,6 +193,7 @@
     <h1>Pagos OFF — HSP</h1>
     <p>Responde con atención · 15 preguntas</p>
     <span class="badge-user" id="badge-user"></span>
+    <span class="badge-timer" id="badge-timer">⏱ 30:00</span>
   </div>
 
   <div class="progresso-wrap">
@@ -196,7 +208,6 @@
     <div class="num-pergunta" id="num-pergunta"></div>
     <div class="texto-pergunta" id="texto-pergunta"></div>
     <div class="opcoes" id="opcoes"></div>
-    <div class="feedback-box" id="feedback-box"></div>
     <div class="nav-row">
       <button class="btn-nav proximo" id="btn-proximo" onclick="proximaPergunta()" style="display:none">
         Siguiente →
@@ -301,12 +312,12 @@ let perguntas = [
     enunciado: "¿Qué acción se debe tomar cuando el cliente NO envía el comprobante de pago en casos de Pagos OFF fuera de plazo?",
     opcoes: [
       { letra:"a", texto:"Cerrar el caso automáticamente sin responder." },
-      { letra:"b", texto:'Rechazar y responder indicando que nos adjunten el comprobante de pago.' },
+      { letra:"b", texto:'Responder con txtblaze "COMPHSP" indicando que nos adjunten el comprobante de pago.' },
       { letra:"c", texto:"Derivar a terceros sin solicitar comprobante." },
       { letra:"d", texto:"Aplicar fondeo directamente sin comprobante." }
     ],
     correta: "b",
-    feedback: 'Cuando el cliente NO envía comprobante, puede si rechazar el caso y responder que nos adjunten el comprobante de pago.'
+    feedback: 'Cuando el cliente NO envía comprobante, se responde con txtblaze "COMPHSP" y se indica en el desplegable que nos adjunten el comprobante de pago.'
   },
   {
     enunciado: "¿Qué herramienta se debe usar para buscar la liquidación cuando el usuario que se contacta NO coincide con el del caso en Pagos OFF (MLA)?",
@@ -323,12 +334,12 @@ let perguntas = [
     enunciado: "En el Admin de Pagos OFF, si el pago aparece con estado 'APROBADO o PROCESADO', ¿cuál es la acción correcta?",
     opcoes: [
       { letra:"a", texto:'Fondear desde el botón del admin.' },
-      { letra:"b", texto:'Responder que el pago si encuentra aprobado y indicarlos los datos que vemos.' },
+      { letra:"b", texto:'Responder con txtblaze "PACRE" y derivar a la última cola.' },
       { letra:"c", texto:"Descartar el pago inmediatamente." },
       { letra:"d", texto:"Consultar a IT por Slack." }
     ],
     correta: "b",
-    feedback: 'Cuando el estado en el Admin es APROBADO o PROCESADO, este pago fue hecho correctamente'
+    feedback: 'Cuando el estado en el Admin es APROBADO o PROCESADO, respondemos con txtblaze "PACRE" y derivamos a la última cola.'
   },
   {
     enunciado: "¿En qué situación se puede fondear desde el botón de la captura en el Admin de OFF?",
@@ -353,37 +364,37 @@ let perguntas = [
     feedback: "Para MLC, si el pago tiene referencia en OS, se copia y se va al ADMIN OFF para verificarla."
   },
   {
-    enunciado: "¿En SemiOnline - MPE si el pago tiene status approved / cancelled y si encuentra en conciliacion, que hacemos?",
+    enunciado: "¿Cuál es el txtblaze correcto para responder cuando el pago se encuentra EN PLAZO?",
     opcoes: [
-      { letra:"a", texto:'"Aplicamos fondeo desde Admin Pagos OFF"' },
-      { letra:"b", texto:'"No gestionamos estes casos"' },
-      { letra:"c", texto:'"Aplicamos ACREDITAR desde Admin Pagos OFF"' },
-      { letra:"d", texto:'"Aplicamos una devolucion a este pago"' }
+      { letra:"a", texto:'"PACRE"' },
+      { letra:"b", texto:'"COMPHSP"' },
+      { letra:"c", texto:'"OFFPLAZO"' },
+      { letra:"d", texto:'"PMAN"' }
     ],
     correta: "c",
-    feedback: 'Cuando el pago tiene status approved / cancelled y si encuentra en conciliacion, acreditamos desde admin'
+    feedback: 'Cuando el payment se encuentra en plazo, se devuelve el caso respondiendo con txtblaze "OFFPLAZO".'
   },
   {
-    enunciado: "Pago en payer ANONYMOUS cual será la acción?",
+    enunciado: "En SemiOnline MPE (Perú - PagoEfectivo), si encontramos el pago con status approved y payment_status cancelled, ¿qué se debe hacer?",
     opcoes: [
       { letra:"a", texto:"Acreditar inmediatamente desde Admin Pagos OFF." },
-      { letra:"b", texto:"Aplicamos cashback al usuario correcto" },
-      { letra:"c", texto:'Consultar al equipo de TMO a través del canal de Slack #desvio-fos-tmo.' },
+      { letra:"b", texto:"Consultar al equipo de TMO a través del canal de Slack #desvio-fos-tmo." },
+      { letra:"c", texto:'Responder con txtblaze "PACRE".' },
       { letra:"d", texto:"Descartar el pago." }
     ],
     correta: "b",
-    feedback: "Cuando tenemos un pago con payer anonymous, y el monto fue aplicado a él, debemos hacer un cashback a la cuenta correcta de user."
+    feedback: "Para MPE, si el pago tiene status approved y payment_status cancelled, se consulta al equipo de TMO por el canal de Slack #desvio-fos-tmo."
   },
   {
-    enunciado: "¿Cuales son las entidades gestionadas por Colombia (MCO) para Pagos OFF?",
+    enunciado: "¿Qué medio de pago utiliza Colombia (MCO) para Pagos OFF?",
     opcoes: [
       { letra:"a", texto:"Abitab y Redpagos." },
       { letra:"b", texto:"Banesco y Mercantil." },
-      { letra:"c", texto:"Efecty y PSE." },
+      { letra:"c", texto:"Efecty." },
       { letra:"d", texto:"PayCash." }
     ],
     correta: "c",
-    feedback: "Colombia (MCO) utiliza Efecty como pagos y PSE como semionline."
+    feedback: "Colombia (MCO) utiliza Efecty como medio de pago OFF."
   },
   {
     enunciado: "¿Cuándo se debe descartar un pago en el Admin de OFF?",
@@ -401,7 +412,7 @@ let perguntas = [
     opcoes: [
       { letra:"a", texto:"Consultar a la entidad vía mail." },
       { letra:"b", texto:"Aplicar fondeo." },
-      { letra:"c", texto:'Consultar a TMO' },
+      { letra:"c", texto:'Responder con txtblaze "PACRE".' },
       { letra:"d", texto:"Derivar a terceros." }
     ],
     correta: "b",
@@ -423,7 +434,7 @@ let perguntas = [
     opcoes: [
       { letra:"a", texto:'Aplicar Pago Manual (PM) directamente.' },
       { letra:"b", texto:"Crear un ticket para OXXO y derivar a Terceros." },
-      { letra:"c", texto:'Rechazar el pago".' },
+      { letra:"c", texto:'Responder con txtblaze "PACRE".' },
       { letra:"d", texto:"Consultar a TMO por Slack." }
     ],
     correta: "b",
@@ -441,15 +452,15 @@ let perguntas = [
     feedback: "El archivo CSV default debe contener: Fecha de Pago, Referencia y Total Amount."
   },
   {
-    enunciado: "En Cash In - PayCash (MLM), solo gestionamos pago con status?",
+    enunciado: "En Pagos Cruzados (MCO), si el payer y el collector NO coinciden, ¿cuál es la acción correcta?",
     opcoes: [
-      { letra:"a", texto:"Pending." },
-      { letra:"b", texto:'Cancelado' },
-      { letra:"c", texto:"Potencial Account" },
-      { letra:"d", texto:"Approved" }
+      { letra:"a", texto:"Aplicar retención al payer." },
+      { letra:"b", texto:'Devolver el caso con txtblaze "PCNOC".' },
+      { letra:"c", texto:"Fondear directamente al usuario correcto." },
+      { letra:"d", texto:"Consultar a IT." }
     ],
     correta: "b",
-    feedback: 'Para Paycash nuestra gestión será en pagos con status cancelados.'
+    feedback: 'En Pagos Cruzados: si el payer y el collector NO coinciden, se devuelve el caso con txtblaze "PCNOC".'
   },
   {
     enunciado: "¿Cuál es el estado en Simetrik V2 (Big Query) que indica que se DEBE APLICAR fondeo en casos PAF?",
@@ -465,12 +476,65 @@ let perguntas = [
 ];
 
 /* ══════════ ESTADO ══════════ */
-let indice       = 0;
-let corretas     = 0;
-let respostaDada = false;
-let respostasLog = [];
-let nomeUser     = "";
-let emailUser    = "";
+let indice        = 0;
+let corretas      = 0;
+let respostaDada  = false;
+let letraSelecionada = null;
+let respostasLog  = [];
+let nomeUser      = "";
+let emailUser     = "";
+let quizAtivo     = false;
+let tempoRestante = 30 * 60; // 30 minutos em segundos
+let timerInterval = null;
+
+/* ══════════ TIMER ══════════ */
+function iniciarTimer() {
+  tempoRestante = 30 * 60;
+  atualizarBadgeTimer();
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    tempoRestante--;
+    atualizarBadgeTimer();
+    if (tempoRestante <= 0) {
+      clearInterval(timerInterval);
+      quizAtivo = false;
+      mostrarResultado(true); // true = encerrado por tiempo
+    }
+  }, 1000);
+}
+function pararTimer() {
+  clearInterval(timerInterval);
+}
+function atualizarBadgeTimer() {
+  const el = document.getElementById("badge-timer");
+  if (!el) return;
+  const min = Math.floor(tempoRestante / 60);
+  const seg = tempoRestante % 60;
+  el.textContent = `⏱ ${String(min).padStart(2,"0")}:${String(seg).padStart(2,"0")}`;
+  el.classList.remove("alerta","critico");
+  if (tempoRestante <= 60)      el.classList.add("critico");
+  else if (tempoRestante <= 300) el.classList.add("alerta");
+}
+
+/* ══════════ ANTI-TROCA DE TELA ══════════ */
+function ativarVigilancia() {
+  document.addEventListener("visibilitychange", handleSaidaTela);
+  window.addEventListener("blur", handleSaidaTela);
+}
+function desativarVigilancia() {
+  document.removeEventListener("visibilitychange", handleSaidaTela);
+  window.removeEventListener("blur", handleSaidaTela);
+}
+function handleSaidaTela() {
+  if (!quizAtivo) return;
+  if (document.visibilityState === "hidden" || !document.hasFocus()) {
+    quizAtivo = false;
+    pararTimer();
+    desativarVigilancia();
+    alert("⚠️ Detectamos que saliste de la pantalla de la evaluación. Por seguridad, la evaluación se reiniciará desde cero.");
+    reiniciar();
+  }
+}
 
 /* ══════════ FUNÇÕES ══════════ */
 function iniciarQuiz() {
@@ -484,6 +548,9 @@ function iniciarQuiz() {
   document.getElementById("tela-quiz").style.display = "block";
   document.getElementById("badge-user").textContent  = "👤 " + nomeUser;
   indice = 0; corretas = 0; respostasLog = [];
+  quizAtivo = true;
+  iniciarTimer();
+  ativarVigilancia();
   renderPergunta();
 }
 
@@ -500,13 +567,13 @@ function renderPergunta() {
     div.className = "opcao";
     div.dataset.letra = op.letra;
     div.innerHTML = `<span class="letra-opcao">${op.letra.toUpperCase()}</span>${op.texto}`;
-    div.addEventListener("click", () => responder(op.letra, div));
+    div.addEventListener("click", () => selecionarOpcao(op.letra, div));
     oDiv.appendChild(div);
   });
 
-  document.getElementById("feedback-box").style.display = "none";
-  document.getElementById("btn-proximo").style.display  = "none";
-  respostaDada = false;
+  respostaDada  = false;
+  letraSelecionada = null;
+  document.getElementById("btn-proximo").style.display = "none";
 
   const pct = Math.round((indice / perguntas.length) * 100);
   document.getElementById("prog-txt").textContent  = `Pregunta ${indice+1} de ${perguntas.length}`;
@@ -514,34 +581,26 @@ function renderPergunta() {
   document.getElementById("prog-fill").style.width = pct + "%";
 }
 
-function responder(letra, elClicado) {
-  if (respostaDada) return;
-  respostaDada = true;
-  const p   = perguntas[indice];
-  const ok  = letra === p.correta;
-  if (ok) corretas++;
-
-  document.querySelectorAll(".opcao").forEach(el => {
-    el.classList.add("desabilitada");
-    if (el.dataset.letra === p.correta) el.classList.add("correta");
-    else if (el.dataset.letra === letra) el.classList.add("incorreta");
-  });
-
-  const fb = document.getElementById("feedback-box");
-  fb.className = "feedback-box " + (ok ? "ok" : "err");
-  fb.textContent = (ok ? "✅ ¡Correcto! " : "❌ Incorrecto. ") + p.feedback;
-  fb.style.display = "block";
+function selecionarOpcao(letra, elClicado) {
+  letraSelecionada = letra;
+  document.querySelectorAll(".opcao").forEach(el => el.classList.remove("selecionada"));
+  elClicado.classList.add("selecionada");
   document.getElementById("btn-proximo").style.display = "inline-flex";
-
-  respostasLog.push({
-    pergunta: p.enunciado,
-    escolha : letra,
-    correta : p.correta,
-    acerto  : ok
-  });
 }
 
 function proximaPergunta() {
+  if (letraSelecionada === null) return;
+  const p  = perguntas[indice];
+  const ok = letraSelecionada === p.correta;
+  if (ok) corretas++;
+
+  respostasLog.push({
+    pergunta: p.enunciado,
+    escolha : letraSelecionada,
+    correta : p.correta,
+    acerto  : ok
+  });
+
   indice++;
   if (indice < perguntas.length) {
     renderPergunta();
@@ -550,12 +609,17 @@ function proximaPergunta() {
   }
 }
 
-function mostrarResultado() {
+function mostrarResultado(porTempo) {
+  quizAtivo = false;
+  pararTimer();
+  desativarVigilancia();
+
   document.getElementById("tela-quiz").style.display      = "none";
   document.getElementById("tela-resultado").style.display = "block";
 
-  const incorretas = perguntas.length - corretas;
-  const nota       = parseFloat(((corretas / perguntas.length) * 10).toFixed(1));
+  const totalPerguntas = perguntas.length;
+  const incorretas     = totalPerguntas - corretas;
+  const nota           = parseFloat(((corretas / totalPerguntas) * 10).toFixed(1));
 
   let nivel, corNivel, msg;
   if (nota < 7.0) {
@@ -567,6 +631,10 @@ function mostrarResultado() {
   } else {
     nivel = "Aprendizaje Superado"; corNivel = "#1bbb6e";
     msg   = "¡Excelente desempeño! Dominas los conceptos de Pagos OFF HSP.";
+  }
+
+  if (porTempo) {
+    msg = "⏱ Se agotó el tiempo de 30 minutos. " + msg;
   }
 
   const circ = document.getElementById("nota-circulo");
@@ -585,13 +653,14 @@ function mostrarResultado() {
   document.getElementById("stat-corretas").textContent  = corretas;
   document.getElementById("stat-incorretas").textContent= incorretas;
 
-  enviarSheets(nota, nivel, corretas, incorretas);
+  enviarSheets(nota, nivel, corretas, incorretas, porTempo);
 }
 
-function enviarSheets(nota, nivel, corretas, incorretas) {
+function enviarSheets(nota, nivel, corretas, incorretas, porTempo) {
   document.getElementById("msg-enviando").textContent = "⏳ Enviando resultado...";
   const detalhes = respostasLog.map((r,i) =>
-    `P${i+1}:${r.acerto?"✓":"✗"}(${r.escolha})`).join(" | ");
+    `P${i+1}:${r.acerto?"✓":"✗"}(${r.escolha})`).join(" | ") +
+    (porTempo ? " | ⏱ TIEMPO AGOTADO" : "");
   const agora = new Date().toLocaleString("es-AR");
   const params = new URLSearchParams({
     dataHora   : agora,
@@ -611,6 +680,10 @@ function enviarSheets(nota, nivel, corretas, incorretas) {
 }
 
 function reiniciar() {
+  pararTimer();
+  desativarVigilancia();
+  quizAtivo = false;
+  document.getElementById("tela-quiz").style.display      = "none";
   document.getElementById("tela-resultado").style.display = "none";
   document.getElementById("tela-id").style.display        = "flex";
   document.getElementById("inp-nome").value  = "";
