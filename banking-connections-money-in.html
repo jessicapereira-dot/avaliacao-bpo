@@ -59,14 +59,8 @@
   .option-btn:hover:not(:disabled) { background: #e0f0ff; border-color: #009ee3; }
   .option-btn.correct { background: #e6f9ee; border-color: #2ecc71; color: #1a7a40; font-weight: 600; }
   .option-btn.wrong { background: #fdecea; border-color: #e53935; color: #b71c1c; }
+  .option-btn.selected { background: #e8f6ff; border-color: #009ee3; color: #005f8c; font-weight: 600; }
   .option-btn:disabled { cursor: default; }
-
-  .feedback-msg {
-    margin-top: 14px; padding: 12px 16px; border-radius: 8px;
-    font-size: 0.9rem; font-weight: 600; display: none;
-  }
-  .feedback-msg.correct { background: #e6f9ee; color: #1a7a40; border-left: 4px solid #2ecc71; }
-  .feedback-msg.wrong   { background: #fdecea; color: #b71c1c; border-left: 4px solid #e53935; }
 
   #btn-next {
     display: none; margin: 20px auto 0; padding: 13px 36px;
@@ -179,14 +173,19 @@
     <input type="email" id="input-email" placeholder="tu@email.com">
     <div id="id-error">Por favor, completa todos los campos.</div>
     <button id="btn-start">Comenzar evaluación →</button>
+    <div style="margin-top:16px;padding:12px 14px;background:#fff8e6;border:1.3px solid #f0d98c;border-radius:8px;font-size:.78rem;color:#7a5b00;line-height:1.5;text-align:left;">
+      ⚠️ Tienes <strong>30 minutos</strong> para completar la evaluación.<br>
+      No cambies de pestaña ni minimices la ventana: si lo haces, la evaluación se reiniciará desde cero.
+    </div>
   </div>
 </div>
 
 <!-- QUIZ -->
 <div id="quiz-screen">
-  <div class="quiz-header">
+  <div class="quiz-header" style="position:relative;">
     <h2>Banking Connections: Money In</h2>
     <p id="quiz-subtitle">Pregunta <span id="q-num">1</span> de 15</p>
+    <span id="badge-timer" style="position:absolute;top:0;right:0;background:rgba(255,255,255,.25);border-radius:20px;padding:4px 14px;font-size:.82rem;font-weight:700;color:#fff;">⏱ 30:00</span>
   </div>
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
@@ -195,10 +194,9 @@
     <div class="question-num" id="q-label">Pregunta 1</div>
     <div class="question-text" id="q-text"></div>
     <div id="options-container"></div>
-    <div class="feedback-msg" id="feedback-msg"></div>
   </div>
   <div style="text-align:center">
-    <button id="btn-next">Siguiente →</button>
+    <button id="btn-next" style="display:none">Siguiente →</button>
   </div>
 </div>
 
@@ -295,7 +293,7 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "Para hacer la busqueda de la transacción ¿qué identificador se debe ingresar al buscar por ID E2E?",
+    q: "En el Admin de Banking Connections para MLM, ¿qué identificador se debe ingresar en 'Indicadores' al buscar por ID E2E?",
     correct: "La clave de rastreo del comprobante enviado por el cliente.",
     wrong: [
       "El número de caso asignado en CX One.",
@@ -304,7 +302,7 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "En el flujo para Money In MLM, cuando tenemos cuando el pago como Not Found e resultado de la query es 'Con Credito sin Debito', ¿qué se debe hacer?",
+    q: "En el flujo de atención TERCEROS para Money In MLM, cuando el resultado de la query es 'Con Credito sin Debito', ¿qué se debe hacer?",
     correct: "Enviamos a Laura por canal BCO.",
     wrong: [
       "El usuario debe contactarse con la entidad bancaria directamente.",
@@ -331,8 +329,8 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "¿Cómo se verifica en OneTool el COELSA ID de una transacción MLA?",
-    correct: "En OT > Por ID > Banking Connection Origin ID > ID > Site",
+    q: "¿Cómo se verifica en CX One el COELSA ID de una transacción MLA?",
+    correct: "En la pestaña Mercado Pago > Pagos > Operaciones Pendientes, ingresando el COELSA ID y expandiendo la pestaña COELSA.",
     wrong: [
       "En la pestaña Mercado Pago > Pagos > Operaciones con CLABE de rastreo, ingresando el COELSA ID.",
       "En el Admin de Banking Connections > Money IN > Por Site, filtrando por ID E2E.",
@@ -349,17 +347,17 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "Si tenemos una transaccion con status refunded, donde validamos su devolucion?",
-    correct: "En OT > Devoluciones > Estado",
+    q: "En Simetrik para Money In (MLC), ¿qué fuente se selecciona en Gestión Transaccional?",
+    correct: "MLC - Liquidación.",
     wrong: [
-      "En Pagos OFF > CashIn > Pagos",
-      "Por el CX One > Pagamentos",
-      "Consultando por canal de slack con BCO."
+      "MLA - Transferencias Bancarias.",
+      "MLM - CLABE STP.",
+      "MLC - Transferencias E2E."
     ]
   },
   {
-    q: "Para Money In en USD (dólares) MLA, si el estado de la transacción en Admin Onetool es 'Rechazada' y la fecha de rechazo es mayor a 24 horas hábiles, ¿qué se hace?",
-    correct: "Validamos si hay diferencia de saldo por el archivo, si no hay vamos consultar por query, si hay consultamos el equipo de Dolar.",
+    q: "Para Money In en USD (dólares) MLA, si el estado de la transacción en Admin Onetool es 'Rechazada' y la fecha de rechazo es menor a 24 horas hábiles, ¿qué se hace?",
+    correct: "Devolver tarea.",
     wrong: [
       "Derivar para Terceros para consultar BIND.",
       "Validar si hay diferencia de saldo en el archivo de conciliaciones.",
@@ -368,7 +366,7 @@ let QUESTIONS = [
   },
   {
     q: "En el flujo de USD (dólares) MLA, si la transacción es 'No acreditada / no localizada en MP' y las informaciones enviadas están correctas (Infos OK), ¿qué se hace?",
-    correct: "Derivar para Terceros, completamos la planilla (equipo debe consultar BIND).",
+    correct: "Derivar para Terceros (equipo debe consultar BIND).",
     wrong: [
       "Devolver tarea al agente Fintech.",
       "Aplicar Cashback por el monto en USD.",
@@ -376,7 +374,7 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "Para MI Dolar, cuando el retorno de BIND indica 'Acreditado en BIND pero no se ve en MP', ¿qué se debe hacer?",
+    q: "En el flujo TERCEROS de USD MLA, cuando el retorno de BIND indica 'Acreditado en BIND pero no se ve en MP', ¿qué se debe hacer?",
     correct: "Completar la planilla según las orientaciones (pestaña – Money IN) y PCNT hará la acción necesaria.",
     wrong: [
       "Derivar tarea para el equipo con script de cuenta origen.",
@@ -385,11 +383,11 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "Cual documento es obligatorio para casos Money In Dolar?",
-    correct: "Comprobante con todos los datos visibles",
+    q: "En el e-mail de consulta a BIND para Money In en USD (estado rechazado no devuelto), ¿cuáles datos son obligatorios incluir?",
+    correct: "Comitente (User ID + nombre), CUIT/CUIL, CBU destino, Monto en USD, Fecha de ingreso, Banco Origen y Comprobante adjunto.",
     wrong: [
       "Solo el número de caso CX, el Payment ID y el monto de la transferencia.",
-      "Nos es necesario un documento",
+      "CUIT, CBU, Monto y nombre del representante que atendió el caso.",
       "ID de transferencia, número de cuenta Mercado Pago y fecha de acreditación esperada."
     ]
   },
@@ -404,8 +402,63 @@ let QUESTIONS = [
   }
 ];
 
-let currentQ = 0, score = 0, correct = 0, wrong = 0, answers = [];
+let currentQ = 0, score = 0, correct = 0, wrong = 0, answers = [], selectedOption = null;
 let userName = '', userEmail = '';
+let quizAtivo = false, tempoRestante = 30*60, timerInterval = null;
+
+function iniciarTimer() {
+  tempoRestante = 30*60;
+  atualizarBadgeTimer();
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    tempoRestante--;
+    atualizarBadgeTimer();
+    if (tempoRestante <= 0) {
+      clearInterval(timerInterval);
+      quizAtivo = false;
+      showResult(true);
+    }
+  }, 1000);
+}
+function pararTimer() { clearInterval(timerInterval); }
+function atualizarBadgeTimer() {
+  const el = document.getElementById('badge-timer');
+  if (!el) return;
+  const m = Math.floor(tempoRestante/60), s = tempoRestante%60;
+  el.textContent = `⏱ ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.style.background = tempoRestante<=60 ? '#ff5c5c' : tempoRestante<=300 ? '#ffdd55' : 'rgba(255,255,255,.25)';
+  el.style.color = tempoRestante<=300 ? '#7a5b00' : '#fff';
+  if (tempoRestante<=60) el.style.color = '#fff';
+}
+function ativarVigilancia() {
+  document.addEventListener('visibilitychange', handleSaidaTela);
+  window.addEventListener('blur', handleSaidaTela);
+}
+function desativarVigilancia() {
+  document.removeEventListener('visibilitychange', handleSaidaTela);
+  window.removeEventListener('blur', handleSaidaTela);
+}
+function handleSaidaTela() {
+  if (!quizAtivo) return;
+  if (document.visibilityState === 'hidden' || !document.hasFocus()) {
+    quizAtivo = false;
+    pararTimer();
+    desativarVigilancia();
+    alert('⚠️ Detectamos que saliste de la pantalla de la evaluación. Por seguridad, la evaluación se reiniciará desde cero.');
+    reiniciarTudo();
+  }
+}
+function reiniciarTudo() {
+  pararTimer();
+  desativarVigilancia();
+  quizAtivo = false;
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('id-screen').style.display = 'flex';
+  document.getElementById('input-name').value = '';
+  document.getElementById('input-email').value = '';
+  currentQ = 0; score = 0; correct = 0; wrong = 0; answers = [];
+}
 
 // IDENTIFICAÇÃO
 document.getElementById('btn-start').addEventListener('click', () => {
@@ -418,6 +471,10 @@ document.getElementById('btn-start').addEventListener('click', () => {
   document.getElementById('id-error').style.display = 'none';
   document.getElementById('id-screen').style.display = 'none';
   document.getElementById('quiz-screen').style.display = 'block';
+  currentQ = 0; correct = 0; wrong = 0; answers = [];
+  quizAtivo = true;
+  iniciarTimer();
+  ativarVigilancia();
   shuffleQuestions();
   renderQuestion();
 });
@@ -435,8 +492,8 @@ function renderQuestion() {
   document.getElementById('q-label').textContent = `Pregunta ${currentQ + 1} de 15`;
   document.getElementById('q-text').textContent = q.q;
   document.getElementById('progress-fill').style.width = `${(currentQ / 15) * 100}%`;
-  document.getElementById('feedback-msg').style.display = 'none';
   document.getElementById('btn-next').style.display = 'none';
+  selectedOption = null;
 
   const opts = [q.correct, ...q.wrong].sort(() => Math.random() - 0.5);
   const container = document.getElementById('options-container');
@@ -445,36 +502,25 @@ function renderQuestion() {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
     btn.textContent = opt;
-    btn.addEventListener('click', () => selectOption(btn, opt, q.correct));
+    btn.addEventListener('click', () => selectOption(btn, opt));
     container.appendChild(btn);
   });
 }
 
-function selectOption(btn, selected, correctAnswer) {
-  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
-  const isCorrect = selected === correctAnswer;
-  const fb = document.getElementById('feedback-msg');
-
-  if (isCorrect) {
-    btn.classList.add('correct');
-    fb.className = 'feedback-msg correct';
-    fb.textContent = '✅ ¡Correcto!';
-    correct++;
-  } else {
-    btn.classList.add('wrong');
-    fb.className = 'feedback-msg wrong';
-    fb.textContent = `❌ Incorrecto. La respuesta correcta es: "${correctAnswer}"`;
-    document.querySelectorAll('.option-btn').forEach(b => {
-      if (b.textContent === correctAnswer) b.classList.add('correct');
-    });
-    wrong++;
-  }
-  answers.push({ q: QUESTIONS[currentQ].q, selected, correct: correctAnswer, ok: isCorrect });
-  fb.style.display = 'block';
-  document.getElementById('btn-next').style.display = 'block';
+function selectOption(btn, opt) {
+  selectedOption = opt;
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('btn-next').style.display = 'inline-block';
 }
 
 document.getElementById('btn-next').addEventListener('click', () => {
+  if (selectedOption === null) return;
+  const q = QUESTIONS[currentQ];
+  const isCorrect = selectedOption === q.correct;
+  if (isCorrect) correct++; else wrong++;
+  answers.push({ q: q.q, selected: selectedOption, correct: q.correct, ok: isCorrect });
+
   currentQ++;
   if (currentQ < 15) {
     renderQuestion();
@@ -483,7 +529,11 @@ document.getElementById('btn-next').addEventListener('click', () => {
   }
 });
 
-function showResult() {
+function showResult(porTempo) {
+  quizAtivo = false;
+  pararTimer();
+  desativarVigilancia();
+
   document.getElementById('quiz-screen').style.display = 'none';
   document.getElementById('result-screen').style.display = 'block';
 
@@ -502,6 +552,8 @@ function showResult() {
     msg = 'Necesitas reforzar el contenido. Relee el manual de Banking Connections - Money In y vuelve a intentarlo.';
   }
 
+  if (porTempo) msg = '⏱ Se agotó el tiempo de 30 minutos. ' + msg;
+
   document.getElementById('result-username').textContent = `${userName} · ${userEmail}`;
   const circle = document.getElementById('score-circle');
   circle.className = `score-circle ${color}`;
@@ -513,14 +565,14 @@ function showResult() {
   document.getElementById('stat-wrong').textContent = wrong;
   document.getElementById('result-msg').textContent = msg;
 
-  sendToSheets(score, label);
+  sendToSheets(score, label, porTempo);
 }
 
-function sendToSheets(score, label) {
+function sendToSheets(score, label, porTempo) {
   const now = new Date().toLocaleString('pt-BR');
   const det = answers.map((a, i) =>
     `P${i + 1}: ${a.ok ? '✓' : '✗'} | ${a.q} | Resp: ${a.selected}`
-  ).join(' || ');
+  ).join(' || ') + (porTempo ? ' || ⏱ TIEMPO AGOTADO' : '');
 
   const params = new URLSearchParams({
     dataHora: now,
@@ -540,11 +592,7 @@ function sendToSheets(score, label) {
 }
 
 document.getElementById('btn-retry').addEventListener('click', () => {
-  currentQ = 0; score = 0; correct = 0; wrong = 0; answers = [];
-  document.getElementById('result-screen').style.display = 'none';
-  document.getElementById('quiz-screen').style.display = 'block';
-  shuffleQuestions();
-  renderQuestion();
+  reiniciarTudo();
 });
 
 // EDITOR
