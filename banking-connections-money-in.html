@@ -293,7 +293,7 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "En el Admin de Banking Connections para MLM, ¿qué identificador se debe ingresar en 'Indicadores' al buscar por ID E2E?",
+    q: "En el OneTool para casos MLM, ¿qué identificador se debe ingresar al buscar por ID E2E?",
     correct: "La clave de rastreo del comprobante enviado por el cliente.",
     wrong: [
       "El número de caso asignado en CX One.",
@@ -303,7 +303,7 @@ let QUESTIONS = [
   },
   {
     q: "En el flujo de atención TERCEROS para Money In MLM, cuando el resultado de la query es 'Con Credito sin Debito', ¿qué se debe hacer?",
-    correct: "Enviamos a Laura por canal BCO.",
+    correct: "Enviamos las infos por canal BCO.",
     wrong: [
       "El usuario debe contactarse con la entidad bancaria directamente.",
       "Devolver la tarea al equipo Fintech.",
@@ -329,17 +329,17 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "¿Cómo se verifica en CX One el COELSA ID de una transacción MLA?",
-    correct: "En la pestaña Mercado Pago > Pagos > Operaciones Pendientes, ingresando el COELSA ID y expandiendo la pestaña COELSA.",
+    q: "¿Cómo se verifica en OneTool el COELSA ID de una transacción MLA?",
+    correct: "Banking Connection Origin ID > ID > Site",
     wrong: [
       "En la pestaña Mercado Pago > Pagos > Operaciones con CLABE de rastreo, ingresando el COELSA ID.",
-      "En el Admin de Banking Connections > Money IN > Por Site, filtrando por ID E2E.",
+      "En el OneTool > Money IN > Por Site, filtrando por ID E2E.",
       "En Simetrik > Gestión Transaccional > Fuentes, seleccionando MLA - Liquidación."
     ]
   },
   {
     q: "Para Money In en OTROS SITES, si la operación no fue localizada con el comprobante enviado, ¿cuál es la primera acción?",
-    correct: "Derivar para Terceros y crear ticket para BCO.",
+    correct: "Consultamos al equipo de BCO.",
     wrong: [
       "Devolver a la cola de origen con información de la operación.",
       "Aplicar reembolso automático al usuario.",
@@ -347,26 +347,26 @@ let QUESTIONS = [
     ]
   },
   {
-    q: "En Simetrik para Money In (MLC), ¿qué fuente se selecciona en Gestión Transaccional?",
-    correct: "MLC - Liquidación.",
+    q: "Si el pago tiene status refunded, debemos siempre chequear? ",
+    correct: "Si en OneTool tiene el mismo status y si tiene la informacion de Refunds en la pantalla",
     wrong: [
-      "MLA - Transferencias Bancarias.",
-      "MLM - CLABE STP.",
-      "MLC - Transferencias E2E."
+      "Si hay fondeo en la cuenta",
+      "El comprobante es valido",
+      "El user está activo"
     ]
   },
   {
-    q: "Para Money In en USD (dólares) MLA, si el estado de la transacción en Admin Onetool es 'Rechazada' y la fecha de rechazo es menor a 24 horas hábiles, ¿qué se hace?",
-    correct: "Devolver tarea.",
+    q: "Para Money In en USD (dólares) MLA, si el estado de la transacción en Admin Onetool es 'Rechazada' y la fecha de rechazo es mayor a 24 horas hábiles, ¿qué se hace?",
+    correct: "Validar si hay diferencia de saldo, si hay debemos consultar el equipo de Dolar, si no hay debemos consultar por query",
     wrong: [
       "Derivar para Terceros para consultar BIND.",
       "Validar si hay diferencia de saldo en el archivo de conciliaciones.",
-      "Consultar al equipo de Dólar MEP por Slack."
+      "Consultar al equipo de BCO por slack"
     ]
   },
   {
     q: "En el flujo de USD (dólares) MLA, si la transacción es 'No acreditada / no localizada en MP' y las informaciones enviadas están correctas (Infos OK), ¿qué se hace?",
-    correct: "Derivar para Terceros (equipo debe consultar BIND).",
+    correct: "Validamos se es un CBU IVSA, si es o no consultamos a BIND por archivo",
     wrong: [
       "Devolver tarea al agente Fintech.",
       "Aplicar Cashback por el monto en USD.",
