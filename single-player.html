@@ -267,6 +267,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
 
     <div id="quiz-area"></div>
 
+    <div style="text-align:center;margin-top:10px;">
+      <button id="btn-finalizar-quiz" onclick="showResults()"
+        style="display:none;padding:14px 40px;background:linear-gradient(135deg,var(--mp),var(--mp-dark));
+        color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;
+        box-shadow:0 4px 14px rgba(0,158,227,.35);">
+        ✅ Finalizar evaluación
+      </button>
+    </div>
+
     <!-- RESULTS -->
     <div class="results" id="results">
       <div style="font-size:2rem">🎯</div>
@@ -582,30 +591,25 @@ function totalQ() { return CONFIG.sections.reduce((a,s)=>a+s.questions.length,0)
 //  QUIZ LOGIC
 // ══════════════════════════════════════════════
 function selectOpt(q, idx) {
-  if (answered[q] !== undefined) return;
-
-  let correctIdx = 0, count = 0;
-  outer: for (const sec of CONFIG.sections) {
-    for (const qObj of sec.questions) { count++; if (count===q){correctIdx=qObj.correct;break outer;} }
-  }
-  const isOk = idx === correctIdx;
-  answered[q] = isOk;
   selected[q] = idx;
 
   document.querySelectorAll(`.opt[data-q="${q}"]`).forEach(o => {
-    o.classList.add('locked');
-    o.classList.remove('sel');
+    o.classList.remove('sel-neutral');
   });
   document.querySelector(`.opt[data-q="${q}"][data-idx="${idx}"]`).classList.add('sel-neutral');
 
   updateProgress();
-  if (Object.keys(answered).length === totalQ()) setTimeout(showResults, 400);
 }
 
 function updateProgress() {
-  const done = Object.keys(answered).length, tot = totalQ();
+  const done = Object.keys(selected).length, tot = totalQ();
   document.getElementById('prog-txt').textContent = `${done} / ${tot} respondidas`;
   document.getElementById('prog-fill').style.width = tot ? `${(done/tot)*100}%` : '0%';
+
+  const btnFinalizar = document.getElementById('btn-finalizar-quiz');
+  if (btnFinalizar) {
+    btnFinalizar.style.display = (done === tot && tot > 0) ? 'inline-block' : 'none';
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -616,6 +620,20 @@ function showResults(porTempo) {
   quizAtivo = false;
   pararTimer();
   desativarVigilancia();
+
+  // Calcula acertos/erros com base na seleção final de cada pergunta
+  answered = {};
+  let gqCalc = 0;
+  CONFIG.sections.forEach(sec => {
+    sec.questions.forEach(qObj => {
+      gqCalc++;
+      if (selected[gqCalc] !== undefined) {
+        answered[gqCalc] = selected[gqCalc] === qObj.correct;
+      } else {
+        answered[gqCalc] = false; // não respondida (ex: tempo esgotado) conta como incorreta
+      }
+    });
+  });
 
   const tot   = totalQ();
   const ok    = Object.values(answered).filter(Boolean).length;
