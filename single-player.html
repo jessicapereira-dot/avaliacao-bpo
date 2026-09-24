@@ -214,6 +214,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
       <p id="hdr-sub">Mercado Pago · FOS LATAM · Octubre 2024</p>
     </div>
   </div>
+  <span id="badge-timer" style="display:none;background:#eee;border-radius:20px;padding:6px 16px;font-size:.85rem;font-weight:700;color:#333;margin-right:10px;">⏱ 30:00</span>
   <button class="btn-editor" onclick="openEditor()">⚙️ Modo Editor</button>
 </div>
 
@@ -237,6 +238,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
       </div>
       <button class="btn-start" onclick="startEval()">Comenzar evaluación →</button>
       <div class="id-note">🔒 Tus datos se usan solo para registro interno</div>
+      <div style="margin-top:14px;padding:12px 14px;background:#fff8e6;border:1.3px solid #f0d98c;border-radius:8px;font-size:.78rem;color:#7a5b00;line-height:1.5;text-align:left;">
+        ⚠️ Tienes <strong>30 minutos</strong> para completar la evaluación.<br>
+        No cambies de pestaña ni minimices la ventana: si lo haces, la evaluación se reiniciará desde cero.
+      </div>
     </div>
   </div>
 
@@ -442,6 +447,50 @@ let CONFIG = {
 let answered = {}, selected = {};
 let editorUnlocked = false, editorTab = 0;
 let userName = '', userEmail = '';
+let quizAtivo = false, tempoRestante = 30*60, timerInterval = null, resultadoJaMostrado = false;
+
+function iniciarTimer() {
+  tempoRestante = 30*60;
+  atualizarBadgeTimer();
+  document.getElementById('badge-timer').style.display = 'inline-block';
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    tempoRestante--;
+    atualizarBadgeTimer();
+    if (tempoRestante <= 0) {
+      clearInterval(timerInterval);
+      quizAtivo = false;
+      if (!resultadoJaMostrado) showResults(true);
+    }
+  }, 1000);
+}
+function pararTimer() { clearInterval(timerInterval); }
+function atualizarBadgeTimer() {
+  const el = document.getElementById('badge-timer');
+  if (!el) return;
+  const m = Math.floor(tempoRestante/60), s = tempoRestante%60;
+  el.textContent = `⏱ ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.style.background = tempoRestante<=60 ? '#ff5c5c' : tempoRestante<=300 ? '#ffdd55' : '#eee';
+  el.style.color = tempoRestante<=300 ? (tempoRestante<=60?'#fff':'#7a5b00') : '#333';
+}
+function ativarVigilancia() {
+  document.addEventListener('visibilitychange', handleSaidaTela);
+  window.addEventListener('blur', handleSaidaTela);
+}
+function desativarVigilancia() {
+  document.removeEventListener('visibilitychange', handleSaidaTela);
+  window.removeEventListener('blur', handleSaidaTela);
+}
+function handleSaidaTela() {
+  if (!quizAtivo) return;
+  if (document.visibilityState === 'hidden' || !document.hasFocus()) {
+    quizAtivo = false;
+    pararTimer();
+    desativarVigilancia();
+    alert('⚠️ Detectamos que saliste de la pantalla de la evaluación. Por seguridad, la evaluación se reiniciará desde cero.');
+    location.reload();
+  }
+}
 
 // ══════════════════════════════════════════════
 //  IDENTIFICAÇÃO
@@ -473,6 +522,10 @@ function startEval() {
 
   document.getElementById('id-screen').style.display  = 'none';
   document.getElementById('quiz-wrap').style.display   = 'block';
+  quizAtivo = true;
+  resultadoJaMostrado = false;
+  iniciarTimer();
+  ativarVigilancia();
   buildQuiz();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -569,7 +622,12 @@ function updateProgress() {
 // ══════════════════════════════════════════════
 //  RESULTS + ENVIO PARA SHEETS
 // ══════════════════════════════════════════════
-function showResults() {
+function showResults(porTempo) {
+  resultadoJaMostrado = true;
+  quizAtivo = false;
+  pararTimer();
+  desativarVigilancia();
+
   const tot   = totalQ();
   const ok    = Object.values(answered).filter(Boolean).length;
   const score = tot > 0 ? parseFloat(((ok/tot)*10).toFixed(1)) : 0;
@@ -595,6 +653,8 @@ function showResults() {
     msgEl.textContent='¡Excelente! Tu puntuación supera el mínimo. Dominás los principales flujos del Single Player HSP.';
     nivelLabel = 'Aprendizaje superado';
   }
+
+  if (porTempo) msgEl.textContent = '⏱ Se agotó el tiempo de 30 minutos. ' + msgEl.textContent;
 
   // section breakdown
   let ssHtml = '', gq = 0, detalles = [];
@@ -624,7 +684,7 @@ function showResults() {
     corretas:  ok,
     incorretas: tot - ok,
     total:     tot,
-    detalhes:  detalles.join(' | ')
+    detalhes:  detalles.join(' | ') + (porTempo ? ' | ⏱ TIEMPO AGOTADO' : '')
   });
 }
 
@@ -673,6 +733,8 @@ function sendToSheets(data) {
 
 function retryEval() {
   // volta para identificação
+  pararTimer(); desativarVigilancia(); quizAtivo = false;
+  document.getElementById('badge-timer').style.display = 'none';
   userName = ''; userEmail = '';
   document.getElementById('inp-nome').value  = '';
   document.getElementById('inp-email').value = '';
