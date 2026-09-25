@@ -185,7 +185,7 @@
   <div class="quiz-header" style="position:relative;">
     <h2>Banking Connections: Money In</h2>
     <p id="quiz-subtitle">Pregunta <span id="q-num">1</span> de 15</p>
-    <span id="badge-timer" style="position:absolute;top:0;right:0;background:rgba(255,255,255,.25);border-radius:20px;padding:4px 14px;font-size:.82rem;font-weight:700;color:#fff;">⏱ 30:00</span>
+    <span id="badge-timer" style="position:absolute;top:0;right:0;background:#eef6fb;border:1.5px solid #009ee3;border-radius:20px;padding:4px 14px;font-size:.82rem;font-weight:700;color:#006fb3;">⏱ 30:00</span>
   </div>
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
@@ -426,9 +426,19 @@ function atualizarBadgeTimer() {
   if (!el) return;
   const m = Math.floor(tempoRestante/60), s = tempoRestante%60;
   el.textContent = `⏱ ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  el.style.background = tempoRestante<=60 ? '#ff5c5c' : tempoRestante<=300 ? '#ffdd55' : 'rgba(255,255,255,.25)';
-  el.style.color = tempoRestante<=300 ? '#7a5b00' : '#fff';
-  if (tempoRestante<=60) el.style.color = '#fff';
+  if (tempoRestante <= 60) {
+    el.style.background = '#ff5c5c';
+    el.style.borderColor = '#ff5c5c';
+    el.style.color = '#fff';
+  } else if (tempoRestante <= 300) {
+    el.style.background = '#ffdd55';
+    el.style.borderColor = '#f0c419';
+    el.style.color = '#7a5b00';
+  } else {
+    el.style.background = '#eef6fb';
+    el.style.borderColor = '#009ee3';
+    el.style.color = '#006fb3';
+  }
 }
 function ativarVigilancia() {
   document.addEventListener('visibilitychange', handleSaidaTela);
