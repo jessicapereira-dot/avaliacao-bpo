@@ -299,10 +299,38 @@
 </div>
 
 <script>
+/* ══════════ ENVÍO AL GOOGLE FORM (mismo formulario que MLB) ══════════ */
+const FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfbvjEJ8GnFniMLSX7NQKQcX2mly06rtnC0xoZdBL0Pixt8Ng/formResponse";
+const FORM_ENTRIES = {
+  dataHora:            "entry.2017782703",
+  avaliacao:           "entry.78177913",
+  nome:                "entry.1818530692",
+  email:               "entry.1056222960",
+  nota:                "entry.48293095",
+  resultado:           "entry.381965002",
+  corretas:            "entry.144582871",
+  incorretas:          "entry.1335730000",
+  total:               "entry.891321817",
+  respostasDetalhadas: "entry.407031098"
+};
+function postarNoForm(d) {
+  const fd = new FormData();
+  fd.append(FORM_ENTRIES.dataHora,            new Date().toLocaleString('pt-BR'));
+  fd.append(FORM_ENTRIES.avaliacao,           String(d.avaliacao  ?? ''));
+  fd.append(FORM_ENTRIES.nome,                String(d.nome       ?? ''));
+  fd.append(FORM_ENTRIES.email,               String(d.email      ?? ''));
+  fd.append(FORM_ENTRIES.nota,                String(d.nota       ?? ''));
+  fd.append(FORM_ENTRIES.resultado,           String(d.resultado  ?? ''));
+  fd.append(FORM_ENTRIES.corretas,            String(d.corretas   ?? ''));
+  fd.append(FORM_ENTRIES.incorretas,          String(d.incorretas ?? ''));
+  fd.append(FORM_ENTRIES.total,               String(d.total      ?? ''));
+  fd.append(FORM_ENTRIES.respostasDetalhadas, String(d.detalhes ?? d.respostas ?? ''));
+  return fetch(FORM_ACTION_URL, { method: 'POST', mode: 'no-cors', body: fd });
+}
+
 /* ══════════ CONFIG ══════════ */
 const CONFIG = {
   avaliacaoNome : "Pagos OFF HSP",
-  sheetsURL     : "https://script.google.com/a/macros/mercadopago.com.br/s/AKfycbxKyw0BaamPDwwT6T-D4dy46ZyaqFCNc4s6No9wvbpXAaMEuv9HNBTsD5fX9VbOaFJuNg/exec",
   pinEditor     : "1234"
 };
 
@@ -717,7 +745,7 @@ function enviarSheets(nota, nivel, corretas, incorretas, porTempo) {
     total      : perguntas.length,
     respostas  : detalhes
   });
-  fetch(CONFIG.sheetsURL + "?" + params.toString(), { method:"GET", mode:"no-cors", credentials:"include" })
+  postarNoForm(Object.fromEntries(params.entries()))
     .then(() => document.getElementById("msg-enviando").textContent = "✅ Resultado registrado correctamente.")
     .catch(() => document.getElementById("msg-enviando").textContent = "⚠️ No se pudo registrar el resultado.");
 }
