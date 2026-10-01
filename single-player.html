@@ -348,10 +348,38 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:
 <div class="toast" id="toast"></div>
 
 <script>
+/* ══════════ ENVÍO AL GOOGLE FORM (mismo formulario que MLB) ══════════ */
+const FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfbvjEJ8GnFniMLSX7NQKQcX2mly06rtnC0xoZdBL0Pixt8Ng/formResponse";
+const FORM_ENTRIES = {
+  dataHora:            "entry.2017782703",
+  avaliacao:           "entry.78177913",
+  nome:                "entry.1818530692",
+  email:               "entry.1056222960",
+  nota:                "entry.48293095",
+  resultado:           "entry.381965002",
+  corretas:            "entry.144582871",
+  incorretas:          "entry.1335730000",
+  total:               "entry.891321817",
+  respostasDetalhadas: "entry.407031098"
+};
+function postarNoForm(d) {
+  const fd = new FormData();
+  fd.append(FORM_ENTRIES.dataHora,            new Date().toLocaleString('pt-BR'));
+  fd.append(FORM_ENTRIES.avaliacao,           String(d.avaliacao  ?? ''));
+  fd.append(FORM_ENTRIES.nome,                String(d.nome       ?? ''));
+  fd.append(FORM_ENTRIES.email,               String(d.email      ?? ''));
+  fd.append(FORM_ENTRIES.nota,                String(d.nota       ?? ''));
+  fd.append(FORM_ENTRIES.resultado,           String(d.resultado  ?? ''));
+  fd.append(FORM_ENTRIES.corretas,            String(d.corretas   ?? ''));
+  fd.append(FORM_ENTRIES.incorretas,          String(d.incorretas ?? ''));
+  fd.append(FORM_ENTRIES.total,               String(d.total      ?? ''));
+  fd.append(FORM_ENTRIES.respostasDetalhadas, String(d.detalhes ?? d.respostas ?? ''));
+  return fetch(FORM_ACTION_URL, { method: 'POST', mode: 'no-cors', body: fd });
+}
+
 // ══════════════════════════════════════════════
 //  GOOGLE SHEETS ENDPOINT
 // ══════════════════════════════════════════════
-const SHEETS_URL = "https://script.google.com/a/macros/mercadopago.com.br/s/AKfycbxKyw0BaamPDwwT6T-D4dy46ZyaqFCNc4s6No9wvbpXAaMEuv9HNBTsD5fX9VbOaFJuNg/exec";
 
 // ══════════════════════════════════════════════
 //  CONFIG
@@ -713,19 +741,7 @@ function showResults(porTempo) {
 function sendToSheets(data) {
   document.getElementById('sending-box').classList.add('show');
 
-  const params = new URLSearchParams({
-    avaliacao:  data.avaliacao,
-    nome:       data.nome,
-    email:      data.email,
-    nota:       data.nota,
-    resultado:  data.resultado,
-    corretas:   data.corretas,
-    incorretas: data.incorretas,
-    total:      data.total,
-    detalhes:   data.detalhes
-  });
-
-  const url = SHEETS_URL + '?' + params.toString();
+  
 
   // Timeout de segurança: 10s
   const timer = setTimeout(function() {
@@ -733,12 +749,7 @@ function sendToSheets(data) {
     document.getElementById('sent-box').classList.add('show');
   }, 10000);
 
-  fetch(url, {
-    method:      'GET',
-    mode:        'no-cors',
-    credentials: 'include',
-    headers:     { 'Content-Type': 'text/plain' }
-  })
+  postarNoForm(data)
   .then(function() {
     clearTimeout(timer);
     document.getElementById('sending-box').classList.remove('show');
